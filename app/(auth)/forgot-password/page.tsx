@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 
 export default function ForgotPasswordPage() {
     return (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 max-w-sm mx-auto">
             <Card>
                 <CardHeader className="text-center">
                     <CardTitle className="text-xl">Mot de passe oublié</CardTitle>
