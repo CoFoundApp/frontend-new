@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import { Separator } from "@/components/ui/separator";
-import { IntroductionGeneralSchema } from "@/schemas/introduction";
+import { IntroductionGeneralSchema, IntroductionOtherSchema, IntroductionProSchema } from "@/schemas/introduction";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { defineStepper } from "@stepperize/react";
 import { Fragment } from "react";
@@ -12,9 +12,13 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 import IntroductionGeneralForm from "./introduction-general-form";
 import IntroductionComplete from "./introduction-complete";
+import IntroductionProForm from "./introduction-pro-form";
+import IntroductionOtherForm from "./introduction-other-form";
 
 const { useStepper, steps, utils } = defineStepper(
     { id: "general", label: "Général", schema: IntroductionGeneralSchema },
+    { id: "pro", label: "Détails professionnels", schema: IntroductionProSchema },
+    { id: "other", label: "Autre", schema: IntroductionOtherSchema },
     { id: "complete", label: "Fin", schema: z.object({}) },
 );
 
@@ -26,6 +30,8 @@ export default function IntroductionForm() {
         resolver: zodResolver(stepper.current.schema),
         defaultValues: {
             visibility: "PUBLIC",
+            languages: "FR",
+            tags: [],
         }
     });
 
@@ -56,8 +62,8 @@ export default function IntroductionForm() {
                         </div>
                     </CardHeader>
                     <CardContent className="grid gap-6">
-                        <nav aria-label="Checkout Steps" className="group my-4">
-                            <ol className="flex items-center justify-between gap-2" aria-orientation="horizontal">
+                        <nav aria-label="Checkout Steps" className="group my-4 overflow-x-auto">
+                            <ol className="flex flex-nowrap items-center justify-between gap-2 min-w-max" aria-orientation="horizontal">
                                 {stepper.all.map((step, index, array) => (
                                     <Fragment key={step.id}>
                                         <li className="flex items-center gap-4 flex-shrink-0">
@@ -93,6 +99,8 @@ export default function IntroductionForm() {
                         <div className="grid gap-6">
                             {stepper.switch({
                                 general: () => <IntroductionGeneralForm />,
+                                pro: () => <IntroductionProForm />,
+                                other: () => <IntroductionOtherForm />,
                                 complete: () => <IntroductionComplete />
                             })}
                         </div>

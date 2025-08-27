@@ -29,13 +29,13 @@ export default function IntroductionGeneralForm() {
             />
             <FormField
                 control={control}
-                name="bio"
+                name="headline"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Description</FormLabel>
+                        <FormLabel>Titre</FormLabel>
                         <FormControl>
-                            <Textarea 
-                                placeholder="Gardien de but, libéro et capitaine de l'équipe du collège Raimon"
+                            <Input
+                                placeholder="Gardien de but"
                                 {...field}
                             />
                         </FormControl>
@@ -45,13 +45,13 @@ export default function IntroductionGeneralForm() {
             />
             <FormField
                 control={control}
-                name="location"
+                name="bio"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Localisation</FormLabel>
+                        <FormLabel>Description</FormLabel>
                         <FormControl>
-                            <Input
-                                placeholder="Raimon"
+                            <Textarea 
+                                placeholder="Gardien de but, libéro et capitaine de l'équipe du collège Raimon"
                                 {...field}
                             />
                         </FormControl>
