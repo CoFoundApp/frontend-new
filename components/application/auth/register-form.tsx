@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { REGISTER } from "@/graphql/mutations/auth";
+import { REGISTER } from "@/graphql/auth";
 import { RegisterSchema } from "@/schemas/auth";
 import { useMutation } from "@apollo/client/react";
 import { zodResolver } from "@hookform/resolvers/zod";

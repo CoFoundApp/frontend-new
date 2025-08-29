@@ -36,7 +36,6 @@ export default function IntroductionForm() {
     });
 
     const onSubmit = (values: z.infer<typeof stepper.current.schema>) => {
-        console.log(values);
         if (stepper.isLast) {
             stepper.reset()
         } else {

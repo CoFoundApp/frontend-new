@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
-import { LOGIN } from "@/graphql/mutations/auth";
+import { LOGIN } from "@/graphql/auth";
 
 export default function LoginForm() {
     const router = useRouter();

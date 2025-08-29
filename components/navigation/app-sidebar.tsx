@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import NavMain from "./nav-main";
+import NavUser from "./nav-user";
 
 export default function AppSidebar() {
     const pathname = usePathname();
@@ -32,7 +33,7 @@ export default function AppSidebar() {
                 <NavMain items={menuItems.general} />
             </SidebarContent>
             <SidebarFooter>
-
+                <NavUser />
             </SidebarFooter>
         </Sidebar>
     );
