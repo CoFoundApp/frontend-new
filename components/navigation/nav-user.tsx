@@ -8,11 +8,9 @@ import { GET_CURRENT_USER, GetCurrentUserResult } from "@/graphql/user";
 import { useQuery } from "@apollo/client/react";
 import { ChevronsUpDown, LogOut, User } from "lucide-react";
 import Link from "next/link";
-import { notFound, useRouter } from "next/navigation";
 
 export default function NavUser() {
     const { isMobile } = useSidebar();
-    const router = useRouter();
 
     const { data, loading, error } = useQuery<GetCurrentUserResult>(GET_CURRENT_USER);
 
