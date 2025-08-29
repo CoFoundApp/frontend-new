@@ -4,17 +4,36 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
+import { LOGOUT } from "@/graphql/auth";
 import { GET_CURRENT_USER, GetCurrentUserResult } from "@/graphql/user";
-import { useQuery } from "@apollo/client/react";
-import { ChevronsUpDown, LogOut, User } from "lucide-react";
+import { useMutation, useQuery } from "@apollo/client/react";
+import { ChevronsUpDown, Loader2, LogOut, User } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function NavUser() {
     const { isMobile } = useSidebar();
+    const router = useRouter();
 
-    const { data, loading, error } = useQuery<GetCurrentUserResult>(GET_CURRENT_USER);
+    const { data, loading: queryLoading, error } = useQuery<GetCurrentUserResult>(GET_CURRENT_USER);
+    const [logout, { loading: logoutLoading }] = useMutation(LOGOUT);
 
-    if (loading) {
+    const handleLogout = async () => {
+        try {
+            await logout();
+            toast.success("Déconnexion réussie !", {
+                description: "Vous vous êtes déconnecté avec succès.",
+            });
+            router.push("/login");
+        } catch (err: any) {
+            toast.error("Oups !", {
+                description: err?.message || "Une erreur est survenue.",
+            });
+        }
+    }
+
+    if (queryLoading) {
         return <Skeleton className="w-full h-16" />
     }
 
@@ -65,10 +84,20 @@ export default function NavUser() {
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
+                            onClick={() => handleLogout()}
                             className="flex items-center gap-2 cursor-pointer text-destructive focus:text-destructive"
                         >
-                            <LogOut className="size-4 text-destructive" />
-                            Se déconnecter
+                            {logoutLoading ? (
+                                <>
+                                    <Loader2 className="size-4 animate-spin" />
+                                    Déconnexion...
+                                </>
+                            ) : (
+                                <>
+                                    <LogOut className="size-4 text-destructive" />
+                                    Se déconnecter
+                                </>
+                            )}
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
