@@ -1,5 +1,6 @@
 import AppSidebar from "@/components/navigation/app-sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import CurrentUserProvider from "@/providers/current-user-provider";
 
 export default function DashboardLayout({
     children,
@@ -8,8 +9,10 @@ export default function DashboardLayout({
 }>) {
     return (
         <SidebarProvider>
-            <AppSidebar />
-            {children}
+            <CurrentUserProvider>
+                <AppSidebar />
+                {children}
+            </CurrentUserProvider>
         </SidebarProvider>
     );
 }

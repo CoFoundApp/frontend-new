@@ -1,3 +1,4 @@
+import WelcomeBanner from "@/components/application/dashboard/welcome-banner";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
@@ -23,6 +24,9 @@ export default function DashboardPage() {
                     </Breadcrumb>
                 </div>
             </header>
+            <div className="flex flex-1 flex-col p-4 pt-0">
+                <WelcomeBanner />
+            </div>
         </SidebarInset>
     );
 }
