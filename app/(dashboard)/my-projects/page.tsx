@@ -1,13 +1,14 @@
-import WelcomeBanner from "@/components/application/dashboard/welcome-banner";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
+import { Plus } from "lucide-react";
 
-export default function DashboardPage() {
+export default function MyProjectsPage() {
     return (
         <SidebarInset>
-            <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-                <div className="flex items-center gap-2 px-4">
+            <header className="flex h-16 px-4 shrink-0 items-center justify-between gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+                <div className="flex items-center gap-2">
                     <SidebarTrigger className="ml-1" />
                     <Separator
                         orientation="vertical"
@@ -23,15 +24,19 @@ export default function DashboardPage() {
                             <BreadcrumbSeparator className="hidden md:block" />
                             <BreadcrumbItem className="hidden md:block">
                                 <BreadcrumbItem>
-                                    <BreadcrumbPage>Tableau de bord</BreadcrumbPage>
+                                    <BreadcrumbPage>Mes projets</BreadcrumbPage>
                                 </BreadcrumbItem>
                             </BreadcrumbItem>
                         </BreadcrumbList>
                     </Breadcrumb>
                 </div>
+                <Button size="sm">
+                    <Plus className="mr-1 size-4" />
+                    Créer un projet
+                </Button>
             </header>
             <div className="flex flex-1 flex-col p-4 pt-0">
-                <WelcomeBanner />
+                
             </div>
         </SidebarInset>
     );
