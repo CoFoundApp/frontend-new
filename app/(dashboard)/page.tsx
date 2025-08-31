@@ -30,7 +30,7 @@ export default function DashboardPage() {
                     </Breadcrumb>
                 </div>
             </header>
-            <div className="flex flex-1 flex-col p-4 pt-0">
+            <div className="flex flex-1 flex-col p-4">
                 <WelcomeBanner />
             </div>
         </SidebarInset>
