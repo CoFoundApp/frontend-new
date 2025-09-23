@@ -1,13 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Lightbulb } from "lucide-react";
 import Link from "next/link";
+import MyProjectsForm from "./form/my-projects-form";
 
 export default function MyProjectsListEmpty() {
     return (
         <div className="text-center py-10 px-6 bg-muted rounded-lg border-2 border-dashed border-muted-foreground/30">
             <div className="flex flex-col items-center space-y-4">
-                <div className="p-4 bg-primary/10 rounded-full">
-                    <Lightbulb className="size-8 text-primary" />
+                <div className="p-4 bg-secondary/10 rounded-full">
+                    <Lightbulb className="size-8 text-secondary" />
                 </div>
 
                 <div className="space-y-2">
@@ -19,9 +20,7 @@ export default function MyProjectsListEmpty() {
                     </p>
                 </div>
                 <div className="flex flex-col sm:flex-row items-center gap-4 pt-4">
-                    <Button>
-                        Lancer mon premier projet
-                    </Button>
+                    <MyProjectsForm />
                     <Button variant="ghost" asChild>
                         <Link href="/discover">
                             Découvrir des projets

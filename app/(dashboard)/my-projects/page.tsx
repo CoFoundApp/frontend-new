@@ -1,9 +1,8 @@
+import MyProjectsForm from "@/components/application/my-projects/form/my-projects-form";
 import MyProjectsLayout from "@/components/application/my-projects/my-projects-layout";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
-import { Plus } from "lucide-react";
 
 export default function MyProjectsPage() {
     return (
@@ -31,10 +30,7 @@ export default function MyProjectsPage() {
                         </BreadcrumbList>
                     </Breadcrumb>
                 </div>
-                <Button size="sm">
-                    <Plus className="mr-1 size-4" />
-                    Créer un projet
-                </Button>
+                <MyProjectsForm />
             </header>
             <div className="flex flex-1 flex-col p-4">
                 <MyProjectsLayout />

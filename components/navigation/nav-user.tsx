@@ -44,7 +44,7 @@ export default function NavUser() {
                         >
                             <Avatar className="size-8 rounded-full">
                                 <AvatarImage src="" alt={user?.myProfile.display_name} />
-                                <AvatarFallback className="rounded-full bg-primary text-primary-foreground">{user?.myProfile.display_name.charAt(0)}</AvatarFallback>
+                                <AvatarFallback className="rounded-full bg-primary text-primary-foreground">{""}</AvatarFallback>
                             </Avatar>
                             <div className="grid flex-1 text-left text-sm leading-tight">
                                 <span className="truncate font-medium">{user?.myProfile.display_name}</span>
@@ -63,7 +63,7 @@ export default function NavUser() {
                             <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                                 <Avatar className="size-8 rounded-lg">
                                     <AvatarImage src="" alt={user?.myProfile.display_name} />
-                                    <AvatarFallback className="rounded-full bg-primary text-primary-foreground">{user?.myProfile.display_name.charAt(0)}</AvatarFallback>
+                                    <AvatarFallback className="rounded-full bg-primary text-primary-foreground">{""}</AvatarFallback>
                                 </Avatar>
                                 <div className="grid flex-1 text-left text-sm leading-tight">
                                     <span className="truncate font-medium">{user?.myProfile.display_name}</span>
