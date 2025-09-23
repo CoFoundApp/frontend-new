@@ -14,6 +14,12 @@ import IntroductionGeneralForm from "./introduction-general-form";
 import IntroductionComplete from "./introduction-complete";
 import IntroductionProForm from "./introduction-pro-form";
 import IntroductionOtherForm from "./introduction-other-form";
+import { Loader2 } from "lucide-react";
+import { useMutation } from "@apollo/client/react";
+import { UPDATE_MY_PROFILE } from "@/graphql/profile";
+import { sideCannons } from "@/lib/utils";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const { useStepper, steps, utils } = defineStepper(
     { id: "general", label: "Général", schema: IntroductionGeneralSchema },
@@ -23,21 +29,44 @@ const { useStepper, steps, utils } = defineStepper(
 );
 
 export default function IntroductionForm() {
+    const router = useRouter();
     const stepper = useStepper();
+
+    const [updateMyProfile, { loading }] = useMutation(UPDATE_MY_PROFILE);
 
     const form = useForm({
         mode: "onTouched",
         resolver: zodResolver(stepper.current.schema),
         defaultValues: {
             visibility: "PUBLIC",
-            languages: "FR",
+            languages: [],
             tags: [],
         }
     });
 
     const onSubmit = (values: z.infer<typeof stepper.current.schema>) => {
         if (stepper.isLast) {
-            stepper.reset()
+            updateMyProfile({
+                variables: {
+                    input: {
+                        ...form.getValues(),
+                        ...values
+                    }
+                }
+            })
+                .then(() => {
+                    sideCannons();
+                    toast.success("Profil créé !", {
+                        description: "Vous avez créé votre profil avec succès.",
+                    });
+                    router.push("/");
+                })
+                .catch((err: Error) => {
+                    console.log(err)
+                    toast.error("Oups !", {
+                        description: err.message || "Une erreur est survenue.",
+                    });
+                })
         } else {
             stepper.next()
         }
@@ -51,7 +80,7 @@ export default function IntroductionForm() {
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="flex justify-center"
             >
-                <Card className="w-full max-w-lg">
+                <Card className="!w-full !max-w-2xl">
                     <CardHeader>
                         <div className="flex justify-between items-center">
                             <CardTitle>Personnalisez votre profil</CardTitle>
@@ -61,40 +90,6 @@ export default function IntroductionForm() {
                         </div>
                     </CardHeader>
                     <CardContent className="grid gap-6">
-                        <nav aria-label="Checkout Steps" className="group my-4 overflow-x-auto">
-                            <ol className="flex flex-nowrap items-center justify-between gap-2 min-w-max" aria-orientation="horizontal">
-                                {stepper.all.map((step, index, array) => (
-                                    <Fragment key={step.id}>
-                                        <li className="flex items-center gap-4 flex-shrink-0">
-                                            <Button
-                                                type="button"
-                                                role="tab"
-                                                variant={index <= currentIndex ? 'default' : 'secondary'}
-                                                aria-current={stepper.current.id === step.id ? 'step' : undefined}
-                                                aria-posinset={index + 1}
-                                                aria-setsize={steps.length}
-                                                aria-selected={stepper.current.id === step.id}
-                                                className="flex size-10 items-center justify-center rounded-full"
-                                                onClick={async () => {
-                                                    const valid = await form.trigger();
-                                                    if (!valid) return;
-                                                    if (index - currentIndex > 1) return;
-                                                    stepper.goTo(step.id);
-                                                }}
-                                            >
-                                                {index + 1}
-                                            </Button>
-                                            <span className="text-sm font-medium">{step.label}</span>
-                                        </li>
-                                        {index < array.length - 1 && (
-                                            <Separator
-                                                className={`flex-1 ${index < currentIndex ? 'bg-primary' : 'bg-muted'}`}
-                                            />
-                                        )}
-                                    </Fragment>
-                                ))}
-                            </ol>
-                        </nav>
                         <div className="grid gap-6">
                             {stepper.switch({
                                 general: () => <IntroductionGeneralForm />,
@@ -113,7 +108,16 @@ export default function IntroductionForm() {
                                 <Button type="submit">{stepper.isLast ? 'Terminer' : 'Suivant'}</Button>
                             </>
                         ) : (
-                            <Button onClick={stepper.reset}>Réinitialiser</Button>
+                            <Button>
+                                {loading ? (
+                                    <>
+                                        <Loader2 className="size-4 animate-spin mr-2" />
+                                        Chargement...
+                                    </>
+                                ) : (
+                                    "Créer votre profil"
+                                )}
+                            </Button>
                         )}
                     </CardFooter>
                 </Card>

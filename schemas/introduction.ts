@@ -42,9 +42,12 @@ export const IntroductionProSchema = z.object({
 
 export const IntroductionOtherSchema = z.object({
     languages: z
-        .enum([
-            "DE", "EN", "ES", "FR", "IT"
-        ]),
+        .array(
+            z.object({
+                id: z.string(),
+                text: z.string(),
+            }),
+        ),
     tags: z
         .array(
             z.object({
