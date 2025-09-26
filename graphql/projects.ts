@@ -13,10 +13,14 @@ export type GetMyProjectsResult = {
         id: string;
         title: string;
         summary?: string;
+        description?: string;
         industry: string;
         status: ProjectStatus;
         stage: ProjectStage;
         visibility: ProjectVisibility;
+        tags: string[];
+        created_at: Date;
+        updated_at: Date;
     }[]
 }
 
@@ -30,6 +34,9 @@ export const GET_MY_PROJECTS = gql`
             status
             stage
             visibility
+            tags
+            created_at
+            updated_at
         }
     }
 `;
