@@ -1,16 +1,20 @@
-import { FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
-import { Tag, TagInput } from 'emblor';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { IntroductionOtherSchema } from "@/schemas/introduction";
-import { useState } from "react";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { IntroductionOtherSchema, LanguageCode } from "@/schemas/introduction";
 import { useFormContext } from "react-hook-form";
 import z from "zod";
+import { MultiSelect } from "@/components/ui/multi-select";
+import { TagInput } from "@/components/ui/tag-input";
+
+const LANGUAGE_OPTIONS = [
+    { label: "Allemand", value: "DE" },
+    { label: "Anglais", value: "EN" },
+    { label: "Espagnol", value: "ES" },
+    { label: "Français", value: "FR" },
+    { label: "Italien", value: "IT" },
+] as const;
 
 export default function IntroductionOtherForm() {
-    const { control, setValue } = useFormContext<z.infer<typeof IntroductionOtherSchema>>();
-
-    const [tags, setTags] = useState<Tag[]>([]);
-    const [activeTagIndex, setActiveTagIndex] = useState<number | null>(null);
+    const { control } = useFormContext<z.infer<typeof IntroductionOtherSchema>>();
 
     return (
         <div className="grid gap-6">
@@ -20,30 +24,21 @@ export default function IntroductionOtherForm() {
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>Langues</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                                <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Langues" />
-                                </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                                <SelectItem value="DE">
-                                    Allemand
-                                </SelectItem>
-                                <SelectItem value="EN">
-                                    Anglais
-                                </SelectItem>
-                                <SelectItem value="ES">
-                                    Espagnol
-                                </SelectItem>
-                                <SelectItem value="FR">
-                                    Français
-                                </SelectItem>
-                                <SelectItem value="IT">
-                                    Italien
-                                </SelectItem>
-                            </SelectContent>
-                        </Select>
+                        <FormControl>
+                            <MultiSelect
+                                options={LANGUAGE_OPTIONS as any}
+                                selected={field.value ?? []}
+                                onSelectionChange={(sel) => {
+                                    const valid = (sel ?? []).filter((v): v is z.infer<typeof LanguageCode> =>
+                                        LanguageCode.options.includes(v as any)
+                                    );
+                                    field.onChange(valid);
+                                }}
+                                placeholder="Sélectionnez vos langues..."
+                                className="w-full"
+                            />
+                        </FormControl>
+                        <FormMessage />
                     </FormItem>
                 )}
             />
@@ -55,17 +50,12 @@ export default function IntroductionOtherForm() {
                         <FormLabel>Tags</FormLabel>
                         <FormControl>
                             <TagInput
-                                {...field}
-                                placeholder="Entrez vos tags"
-                                tags={tags}
-                                setTags={(newTags) => {
-                                    setTags(newTags);
-                                    setValue("tags", newTags as [Tag, ...Tag[]]);
-                                }}
-                                activeTagIndex={activeTagIndex}
-                                setActiveTagIndex={setActiveTagIndex}
+                                tags={field.value ?? []}
+                                onTagsChange={(next) => field.onChange(next)}
+                                placeholder="Tapez et Entrée pour ajouter un tag..."
                             />
                         </FormControl>
+                        <FormMessage />
                     </FormItem>
                 )}
             />

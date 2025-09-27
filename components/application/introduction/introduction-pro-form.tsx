@@ -34,9 +34,13 @@ export default function IntroductionProForm() {
                         <FormControl>
                             <Input
                                 type="number"
+                                min={0}
                                 step={1}
+                                value={field.value ?? ""}
+                                onChange={(e) =>
+                                    field.onChange(e.target.value === "" ? undefined : e.target.valueAsNumber)
+                                }
                                 placeholder="35"
-                                {...field}
                             />
                         </FormControl>
                         <FormMessage />

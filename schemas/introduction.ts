@@ -32,6 +32,8 @@ export const IntroductionProSchema = z.object({
         .number({
             message: "Vous devez renseigner un nombre d'heures valide.",
         })
+        .int()
+        .min(0, { message: "Le nombre d'heures doit être positif." })
         .optional(),
     looking_for: z
         .string({
@@ -40,19 +42,15 @@ export const IntroductionProSchema = z.object({
         .optional(),
 });
 
+export const LanguageCode = z.enum(["DE", "EN", "ES", "FR", "IT"]);
+
 export const IntroductionOtherSchema = z.object({
     languages: z
-        .array(
-            z.object({
-                id: z.string(),
-                text: z.string(),
-            }),
-        ),
+        .array(LanguageCode)
+        .min(1, { message: "Sélectionnez au moins une langue." })
+        .default([]),
     tags: z
-        .array(
-            z.object({
-                id: z.string(),
-                text: z.string(),
-            }),
-        ),
+        .array(z.string())
+        .min(1, { message: "Vous devez renseigner un tag minimum." })
+        .default([]),
 });

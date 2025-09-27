@@ -3,11 +3,9 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
-import { Separator } from "@/components/ui/separator";
 import { IntroductionGeneralSchema, IntroductionOtherSchema, IntroductionProSchema } from "@/schemas/introduction";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { defineStepper } from "@stepperize/react";
-import { Fragment } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import IntroductionGeneralForm from "./introduction-general-form";
