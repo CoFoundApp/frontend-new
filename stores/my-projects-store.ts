@@ -1,3 +1,4 @@
+import { normalize } from "@/lib/utils";
 import { create } from "zustand";
 
 type Order = "asc" | "desc";
@@ -23,9 +24,6 @@ type MyProjectsState = {
 
     getFilteredProjects: () => IProject[];
 };
-
-const normalize = (v?: string) =>
-    (v ?? "").toLocaleLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "");
 
 export const useMyProjects = create<MyProjectsState>((set, get) => ({
     projects: [],

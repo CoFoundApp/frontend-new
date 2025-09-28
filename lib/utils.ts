@@ -53,3 +53,6 @@ export const projectStageConfig = {
   SCALE: { label: "En levé" },
   TRACTION: { label: "Tractation" },
 }
+
+export const normalize = (v?: string) =>
+    (v ?? "").toLocaleLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "");
