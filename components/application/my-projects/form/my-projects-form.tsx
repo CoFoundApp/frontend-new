@@ -18,7 +18,6 @@ import { useMutation } from "@apollo/client/react";
 import { CREATE_PROJECT, GET_MY_PROJECTS } from "@/graphql/projects";
 import { toast } from "sonner";
 import { sideCannons } from "@/lib/utils";
-import { useMyProjects } from "@/stores/my-projects-store";
 
 const { useStepper, steps, utils } = defineStepper(
     { id: "general", label: "Général", schema: ProjectGeneralSchema },

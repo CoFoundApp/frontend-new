@@ -42,7 +42,7 @@ export const IntroductionProSchema = z.object({
         .optional(),
 });
 
-export const LanguageCode = z.enum(["DE", "EN", "ES", "FR", "IT"]);
+export const LanguageCode = z.enum(["de", "en", "es", "fr", "it"]);
 
 export const IntroductionOtherSchema = z.object({
     languages: z

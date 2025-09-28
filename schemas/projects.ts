@@ -36,24 +36,15 @@ export const ProjectSettingsSchema = z.object({
 
 export const ProjectCollectionSchema = z.object({
     tags: z
-        .array(
-            z.object({
-                id: z.string(),
-                text: z.string(),
-            }),
-        ),
+        .array(z.string())
+        .min(1, { message: "Vous devez renseigner un tag minimum." })
+        .default([]),
     project_interests: z
-        .array(
-            z.object({
-                id: z.string(),
-                text: z.string(),
-            }),
-        ),
+        .array(z.string())
+        .min(1, { message: "Vous devez renseigner un intérêt minimum." })
+        .default([]),
     project_skills: z
-        .array(
-            z.object({
-                id: z.string(),
-                text: z.string(),
-            }),
-        )
+        .array(z.string())
+        .min(1, { message: "Vous devez renseigner une compétence minimum." })
+        .default([]),
 });

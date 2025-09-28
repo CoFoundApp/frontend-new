@@ -6,11 +6,11 @@ import { MultiSelect } from "@/components/ui/multi-select";
 import { TagInput } from "@/components/ui/tag-input";
 
 const LANGUAGE_OPTIONS = [
-    { label: "Allemand", value: "DE" },
-    { label: "Anglais", value: "EN" },
-    { label: "Espagnol", value: "ES" },
-    { label: "Français", value: "FR" },
-    { label: "Italien", value: "IT" },
+    { label: "Allemand", value: "de" },
+    { label: "Anglais", value: "en" },
+    { label: "Espagnol", value: "es" },
+    { label: "Français", value: "fr" },
+    { label: "Italien", value: "it" },
 ] as const;
 
 export default function IntroductionOtherForm() {
