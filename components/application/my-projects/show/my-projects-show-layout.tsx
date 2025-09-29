@@ -6,6 +6,7 @@ import MyProjectsShowHeader from "./my-projects-show-header";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import MyProjectsShowPositions from "./my-projects-show-positions";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface MyProjectsShowLayoutProps {
     projectId: string;
@@ -30,42 +31,62 @@ export default function MyProjectsShowLayout({
     }
 
     return (
-        <div className="grid gap-6 md:p-4 lg:p-6">
-            <MyProjectsShowHeader 
-                avatar_url={project.avatar_url} 
-                title={project.title} 
-                summary={project.summary}
-                industry={project.industry}
-                status={project.status}
-                stage={project.stage}
-                visibility={project.visibility}
-            />
-            <div className="grid grid-cols-1 lg:grid-cols-3 mt-4 gap-6">
-                <div className="grid gap-6 h-fit">
-                    <div className="flex flex-col gap-2">
-                        <h3 className="font-semibold text-lg">Description</h3>
-                        <p>{project.description}</p>
-                    </div>
-                    <div className="flex flex-col gap-2">
-                        <h3 className="font-semibold text-lg">Tags</h3>
-                        <div className="flex flex-wrap gap-2">
-                            {project.tags.map((tag) => (
-                                <Badge key={tag} variant="secondary">{tag}</Badge>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-                <div className="md:col-span-2">
-                    <Tabs defaultValue="members">
-                        <TabsList>
-                            <TabsTrigger value="members">Membres</TabsTrigger>
-                            <TabsTrigger value="positions">Postes</TabsTrigger>
-                        </TabsList>
-                        <TabsContent value="positions">
-                            <MyProjectsShowPositions projectId={project.id} />
-                        </TabsContent>
-                    </Tabs>
-                </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="lg:col-span-1 xl:col-span-1 space-y-6">
+                <MyProjectsShowHeader
+                    avatar_url={project.avatar_url}
+                    title={project.title}
+                    description={project.description}
+                    summary={project.summary}
+                    industry={project.industry}
+                    status={project.status}
+                    stage={project.stage}
+                    visibility={project.visibility}
+                />
+
+                {project.tags && project.tags.length > 0 && (
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Tags</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="flex flex-wrap gap-2">
+                                {project.tags.map((tag) => (
+                                    <Badge key={tag} variant="secondary" className="text-xs">
+                                        {tag}
+                                    </Badge>
+                                ))}
+                            </div>
+                        </CardContent>
+                    </Card>
+                )}
+            </div>
+
+            <div className="lg:col-span-2 xl:col-span-3">
+                <Tabs defaultValue="positions" className="w-full">
+                    <TabsList className="grid w-full grid-cols-2 mb-6">
+                        <TabsTrigger value="members" className="text-sm">
+                            Membres
+                        </TabsTrigger>
+                        <TabsTrigger value="positions" className="text-sm">
+                            Postes
+                        </TabsTrigger>
+                    </TabsList>
+
+                    <TabsContent value="members" className="mt-0">
+                        <Card>
+                            <CardContent className="p-6">
+                                <div className="text-center py-8">
+                                    <p className="text-muted-foreground">Section membres à venir...</p>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+
+                    <TabsContent value="positions" className="mt-0">
+                        <MyProjectsShowPositions projectId={project.id} />
+                    </TabsContent>
+                </Tabs>
             </div>
         </div>
     )

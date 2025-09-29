@@ -58,6 +58,7 @@ export default function MyProjectsForm() {
                 }
             })
                 .then(() => {
+                    setOpen(false);
                     sideCannons();
                     toast.success("Projet créé !", {
                         description: "Vous avez créé votre projet avec succès.",

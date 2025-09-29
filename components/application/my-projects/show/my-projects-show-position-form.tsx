@@ -24,7 +24,7 @@ export default function MyProjectsShowPositionForm({
 }: MyProjectsShowPositionFormProps) {
     const [open, setOpen] = useState(false);
     const [createProjectPosition, { loading }] = useMutation(CREATE_PROJECT_POSITION, {
-        refetchQueries: [{ query: GET_PROJECT_POSITIONS, variables: { projectId } }],
+        refetchQueries: [{ query: GET_PROJECT_POSITIONS, variables: { project_id: projectId } }],
     });
 
     const form = useForm({
@@ -32,6 +32,7 @@ export default function MyProjectsShowPositionForm({
         defaultValues: {
             title: "",
             description: "",
+            project_id: projectId
         },
         mode: "onTouched",
     });
@@ -39,14 +40,11 @@ export default function MyProjectsShowPositionForm({
     const onSubmit = (values: z.infer<typeof ProjectPositionSchema>) => {
         createProjectPosition({
             variables: {
-                input: {
-                    title: values.title,
-                    description: values.description,
-                    project_id: projectId
-                }
+                input: values
             }
         })
             .then(() => {
+                setOpen(false);
                 toast.success("Poste créé !", {
                     description: "Vous avez créé votre poste avec succès.",
                 });

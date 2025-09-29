@@ -6,6 +6,7 @@ import { GET_MY_PROJECTS, GetMyProjectsResult } from "@/graphql/projects";
 import MyProjectCard from "@/components/application/my-projects/my-project-card";
 import { useMyProjects } from "@/stores/my-projects-store";
 import { useEffect } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function MyProjectsList() {
     const { data, loading, error } = useQuery<GetMyProjectsResult>(GET_MY_PROJECTS, {
@@ -22,7 +23,7 @@ export default function MyProjectsList() {
     const projects = getFilteredProjects();
 
     if (loading) {
-        return <p>Chargement...</p>
+        return <Skeleton className="w-full h-72" />
     }
 
     if (!projects || projects.length === 0) {

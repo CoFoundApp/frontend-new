@@ -19,7 +19,7 @@ export default function CurrentUserProvider({
     const { data, loading, error } = useQuery<GetCurrentUserResult>(
         GET_CURRENT_USER,
         {
-            fetchPolicy: "cache-first",
+            fetchPolicy: "network-only",
             errorPolicy: "all",
         }
     );

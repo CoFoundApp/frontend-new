@@ -62,4 +62,8 @@ export const ProjectPositionSchema = z.object({
             message: "Vous devez renseigner une description valide.",
         })
         .optional(),
+    project_id: z
+        .string({
+            message: "Vous devez renseigner un projet valide.",
+        }),
 });

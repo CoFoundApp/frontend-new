@@ -112,3 +112,11 @@ export const CREATE_PROJECT_POSITION = gql`
         }
     }
 `;
+
+export const CLOSE_PROJECT_POSITION = gql`
+    mutation CloseProjectPosition($id: String!) {
+        closeProjectPosition(id: $id) {
+            __typename
+        }
+    }
+`;

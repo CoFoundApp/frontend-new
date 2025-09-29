@@ -9,7 +9,7 @@ export default function Providers({ children }: { children: ReactNode }) {
     return (
         <ApolloProvider client={client}>
             {children}
-            <Toaster />
+            <Toaster position="bottom-center" />
         </ApolloProvider>
     );
 }

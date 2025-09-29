@@ -23,3 +23,4 @@ interface IProject {
 }
 
 type PositionStatus = "CLOSED" | "OPEN";
+type ProfileVisibility = "PRIVATE" | "PUBLIC" | "UNLISTED";
