@@ -1,19 +1,25 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import ChatConversations from "./chat-conversations";
-import ChatConversationDetail from "./chat-conversation-detail";
+import { useState } from "react"
+import ChatConversations from "./chat-conversations"
+import ChatConversationDetail from "./chat-conversation-detail"
 
 export default function ChatLayout() {
     const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null)
 
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <ChatConversations
-                onSelectConversation={setSelectedConversationId}
-                selectedConversationId={selectedConversationId}
-            />
-            <ChatConversationDetail conversationId={selectedConversationId} />
+        <div className="flex flex-col h-full w-full overflow-hidden">
+            {!selectedConversationId ? (
+                <ChatConversations
+                    onSelectConversation={setSelectedConversationId}
+                    selectedConversationId={selectedConversationId}
+                />
+            ) : (
+                <ChatConversationDetail
+                    conversationId={selectedConversationId}
+                    onBack={() => setSelectedConversationId(null)}
+                />
+            )}
         </div>
-    );
+    )
 }
