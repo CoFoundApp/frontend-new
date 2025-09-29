@@ -1,4 +1,4 @@
-import { Folder, LayoutGrid, Search } from "lucide-react";
+import { Folder, LayoutGrid, MessageCircle, Search } from "lucide-react";
 
 export function getMenuItems(pathname: string) {
     return {
@@ -20,6 +20,12 @@ export function getMenuItems(pathname: string) {
                 label: "Découvrir",
                 icon: Search,
                 isActive: pathname.includes("/discover"),
+            },
+            {
+                href: "/chat",
+                label: "Messages",
+                icon: MessageCircle,
+                isActive: pathname.includes("/chat"),
             },
         ],       
     }

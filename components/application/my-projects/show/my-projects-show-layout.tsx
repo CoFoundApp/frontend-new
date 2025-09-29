@@ -18,7 +18,7 @@ export default function MyProjectsShowLayout({
 }: MyProjectsShowLayoutProps) {
     const { data, loading, error } = useQuery<GetProjectByIdResult>(GET_PROJECT_BY_ID, {
         variables: { id: projectId },
-        fetchPolicy: "cache-first",
+        fetchPolicy: "network-only",
     });
 
     const project = data?.projectById;
@@ -82,5 +82,5 @@ export default function MyProjectsShowLayout({
                 </Tabs>
             </div>
         </div>
-    )
+    );
 }

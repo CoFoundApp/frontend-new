@@ -15,7 +15,7 @@ export default function MyProjectsShowPositions({
 }: MyProjectsShowPositionsProps) {
     const { data, loading, error } = useQuery<GetProjectPositionsResult>(GET_PROJECT_POSITIONS, {
         variables: { project_id: projectId },
-        fetchPolicy: "cache-first",
+        fetchPolicy: "network-only",
     });
 
     const [deleteProjectPosition] = useMutation(CLOSE_PROJECT_POSITION, {

@@ -4,6 +4,7 @@ export type CurrentUser = {
     myEmail: string;
     myProfile: {
         display_name: string;
+        user_id: string;
     }
 } | null;
 

@@ -73,7 +73,7 @@ export default function NavUser() {
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem asChild>
-                            <Link href="#" className="flex items-center gap-2 cursor-pointer">
+                            <Link href="/my-profile" className="flex items-center gap-2 cursor-pointer">
                                 <User className="size-4" />
                                 Mon profil
                             </Link>

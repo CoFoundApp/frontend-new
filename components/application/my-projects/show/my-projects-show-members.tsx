@@ -16,7 +16,7 @@ export default function MyProjectsShowMembers({
 }: MyProjectsShowMembersProps) {
     const { data, loading, error } = useQuery<GetProjectMembersResult>(GET_PROJECT_MEMBERS, {
         variables: { project_id: projectId },
-        fetchPolicy: "cache-first",
+        fetchPolicy: "network-only",
     });
 
     const members = data?.projectMembers;

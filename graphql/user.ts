@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 export type GetCurrentUserResult = {
-    myProfile: { display_name: string };
+    myProfile: { display_name: string, user_id: string };
     myEmail: string;
 }
 
@@ -10,6 +10,7 @@ export const GET_CURRENT_USER = gql`
         myEmail
         myProfile {
             display_name
+            user_id
         }
     }
 `;
