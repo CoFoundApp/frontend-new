@@ -1,3 +1,5 @@
+"use client";
+
 import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
 import { Badge } from "../../ui/badge";
 import { projectStageConfig, projectStatusConfig, projectVisibilityConfig } from "@/lib/utils";
@@ -7,12 +9,15 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useMutation } from "@apollo/client/react";
 import { DELETE_PROJECT, GET_MY_PROJECTS } from "@/graphql/projects";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface MyProjectCardProps {
     project: Partial<IProject>;
 }
 
 export default function MyProjectCard({ project }: MyProjectCardProps) {
+    const router = useRouter();
+
     const [deleteProject, { loading }] = useMutation(DELETE_PROJECT, {
         refetchQueries: [GET_MY_PROJECTS],
     });
@@ -37,7 +42,10 @@ export default function MyProjectCard({ project }: MyProjectCardProps) {
     }
 
     return (
-        <Card className="h-fit">
+        <Card 
+            className="h-fit"
+            onClick={() => router.push(`/my-projects/${project.id}`)}
+        >
             <CardHeader className="flex justify-between items-center">
                 <div className="flex items-center gap-4">
                     <CardTitle>{project.title}</CardTitle>

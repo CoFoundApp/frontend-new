@@ -48,3 +48,18 @@ export const ProjectCollectionSchema = z.object({
         .min(1, { message: "Vous devez renseigner une compétence minimum." })
         .default([]),
 });
+
+export const ProjectPositionSchema = z.object({
+    title: z
+        .string({
+            message: "Vous devez renseigner un titre valide."
+        })
+        .min(1, {
+            message: "Vous devez spécifier le titre du projet.",
+        }),
+    description: z
+        .string({
+            message: "Vous devez renseigner une description valide.",
+        })
+        .optional(),
+});
