@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import MyProjectsShowPositions from "./my-projects-show-positions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import MyProjectsShowMembers from "./my-projects-show-members";
 
 interface MyProjectsShowLayoutProps {
     projectId: string;
@@ -46,10 +47,8 @@ export default function MyProjectsShowLayout({
 
                 {project.tags && project.tags.length > 0 && (
                     <Card>
-                        <CardHeader>
+                        <CardHeader className="gap-4">
                             <CardTitle>Tags</CardTitle>
-                        </CardHeader>
-                        <CardContent>
                             <div className="flex flex-wrap gap-2">
                                 {project.tags.map((tag) => (
                                     <Badge key={tag} variant="secondary" className="text-xs">
@@ -57,13 +56,13 @@ export default function MyProjectsShowLayout({
                                     </Badge>
                                 ))}
                             </div>
-                        </CardContent>
+                        </CardHeader>
                     </Card>
                 )}
             </div>
 
             <div className="lg:col-span-2 xl:col-span-3">
-                <Tabs defaultValue="positions" className="w-full">
+                <Tabs defaultValue="members" className="w-full">
                     <TabsList className="grid w-full grid-cols-2 mb-6">
                         <TabsTrigger value="members" className="text-sm">
                             Membres
@@ -74,13 +73,7 @@ export default function MyProjectsShowLayout({
                     </TabsList>
 
                     <TabsContent value="members" className="mt-0">
-                        <Card>
-                            <CardContent className="p-6">
-                                <div className="text-center py-8">
-                                    <p className="text-muted-foreground">Section membres à venir...</p>
-                                </div>
-                            </CardContent>
-                        </Card>
+                        <MyProjectsShowMembers projectId={project.id} />
                     </TabsContent>
 
                     <TabsContent value="positions" className="mt-0">

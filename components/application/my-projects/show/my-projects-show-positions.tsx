@@ -4,7 +4,6 @@ import { Briefcase, Trash2, UserPlus } from "lucide-react";
 import MyProjectsShowPositionForm from "./my-projects-show-position-form";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 interface MyProjectsShowPositionsProps {
@@ -53,7 +52,7 @@ export default function MyProjectsShowPositions({
                 </div>
                 <Skeleton className="w-full h-48" />
             </div>
-        )
+        );
     }
 
     if (error) {
@@ -65,7 +64,7 @@ export default function MyProjectsShowPositions({
                     </div>
                 </CardContent>
             </Card>
-        )
+        );
     }
 
     return (
@@ -96,7 +95,7 @@ export default function MyProjectsShowPositions({
                     </CardContent>
                 </Card>
             ) : (
-                <div className="grid gap-4">
+                <div className="grid xl:grid-cols-2 gap-4">
                     {positions.map((position) => (
                         <Card key={position.id}>
                             <CardHeader className="flex justify-between items-center gap-4">

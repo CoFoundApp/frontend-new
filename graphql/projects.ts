@@ -120,3 +120,35 @@ export const CLOSE_PROJECT_POSITION = gql`
         }
     }
 `;
+
+export type GetProjectMembersResult = {
+    projectMembers: {
+        role: MemberRole;
+        users: {
+            id: string;
+            email: string;
+            profile: {
+                avatar_url: string | null;
+                display_name: string | null;
+                headline: string | null;
+            }
+        }
+    }[] | null;
+}
+
+export const GET_PROJECT_MEMBERS = gql`
+    query GetProjectMembers($project_id: String!) {
+        projectMembers(project_id: $project_id) {
+            role
+            users {
+                id
+                email
+                profile {
+                    avatar_url
+                    display_name
+                    headline
+                }
+            }
+        }
+    }
+`;

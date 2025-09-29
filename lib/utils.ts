@@ -54,5 +54,12 @@ export const projectStageConfig = {
   TRACTION: { label: "Tractation" },
 }
 
+export const memberRoleConfig = {
+  MAINTAINER: { label: "Soutien" },
+  MEMBER: { label: "Membre" },
+  MENTOR: { label: "Mentor" },
+  OWNER: { label: "Propriétaire" },
+}
+
 export const normalize = (v?: string) =>
     (v ?? "").toLocaleLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "");

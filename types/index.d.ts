@@ -24,3 +24,4 @@ interface IProject {
 
 type PositionStatus = "CLOSED" | "OPEN";
 type ProfileVisibility = "PRIVATE" | "PUBLIC" | "UNLISTED";
+type MemberRole = "MAINTAINER" | "MEMBER" | "MENTOR" | "OWNER";
