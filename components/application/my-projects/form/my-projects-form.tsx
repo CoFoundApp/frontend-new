@@ -58,6 +58,7 @@ export default function MyProjectsForm() {
                 }
             })
                 .then(() => {
+                    form.reset();
                     setOpen(false);
                     sideCannons();
                     toast.success("Projet créé !", {

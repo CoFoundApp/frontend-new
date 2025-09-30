@@ -1,21 +1,16 @@
-"use client";
+"use client"
 
-import { GET_PROJECT_BY_ID, GetProjectByIdResult } from "@/graphql/projects";
-import { useQuery } from "@apollo/client/react";
-import MyProjectsShowHeader from "./my-projects-show-header";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import MyProjectsShowPositions from "./my-projects-show-positions";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import MyProjectsShowMembers from "./my-projects-show-members";
+import { GET_PROJECT_BY_ID, type GetProjectByIdResult } from "@/graphql/projects"
+import { useQuery } from "@apollo/client/react"
+import { Badge } from "@/components/ui/badge"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import ProjectHeader from "./project-header"
 
-interface MyProjectsShowLayoutProps {
-    projectId: string;
+interface ProjectLayoutProps {
+    projectId: string
 }
 
-export default function MyProjectsShowLayout({
-    projectId
-}: MyProjectsShowLayoutProps) {
+export default function ProjectLayout({ projectId }: ProjectLayoutProps) {
     const { data, loading, error } = useQuery<GetProjectByIdResult>(GET_PROJECT_BY_ID, {
         variables: { id: projectId },
         fetchPolicy: "network-only",
@@ -24,17 +19,17 @@ export default function MyProjectsShowLayout({
     const project = data?.projectById;
 
     if (loading) {
-        return <p>Chargement...</p>
+        return <p>Chargement...</p>;
     }
 
-    if (!project) {
-        return <p>Ce projet n'existe pas !</p>
+    if (!project || error) {
+        return <p>Ce projet n'existe pas !</p>;
     }
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            <div className="lg:col-span-1 xl:col-span-1 space-y-4">
-                <MyProjectsShowHeader
+            <div className="lg:col-span-1 xl:col-span-1 space-y-6">
+                <ProjectHeader
                     avatar_url={project.avatar_url}
                     title={project.title}
                     description={project.description}
@@ -42,7 +37,6 @@ export default function MyProjectsShowLayout({
                     industry={project.industry}
                     status={project.status}
                     stage={project.stage}
-                    visibility={project.visibility}
                 />
 
                 {project.tags && project.tags.length > 0 && (
@@ -92,24 +86,16 @@ export default function MyProjectsShowLayout({
             </div>
 
             <div className="lg:col-span-2 xl:col-span-3">
-                <Tabs defaultValue="members" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2 mb-6">
-                        <TabsTrigger value="members" className="text-sm">
-                            Membres
-                        </TabsTrigger>
-                        <TabsTrigger value="positions" className="text-sm">
-                            Postes
-                        </TabsTrigger>
-                    </TabsList>
-
-                    <TabsContent value="members" className="mt-0">
-                        <MyProjectsShowMembers projectId={project.id} />
-                    </TabsContent>
-
-                    <TabsContent value="positions" className="mt-0">
-                        <MyProjectsShowPositions projectId={project.id} />
-                    </TabsContent>
-                </Tabs>
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Positions disponibles</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="text-sm text-muted-foreground">
+                            Les positions disponibles pour ce projet seront affichées ici.
+                        </p>
+                    </CardContent>
+                </Card>
             </div>
         </div>
     );

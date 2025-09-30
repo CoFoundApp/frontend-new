@@ -21,3 +21,11 @@ export const LOGOUT = gql`
         logout
     }
 `;
+
+export const REFRESH_TOKEN = gql`
+    mutation RefreshToken {
+        refresh {
+            __typename
+        }
+    }
+`

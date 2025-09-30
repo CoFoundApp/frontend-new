@@ -75,6 +75,8 @@ export const GET_PROJECT_BY_ID = gql`
             id
             industry
             owner_id
+            project_interests
+            project_skills
             stage
             status
             summary
@@ -149,6 +151,116 @@ export const GET_PROJECT_MEMBERS = gql`
                     headline
                 }
             }
+        }
+    }
+`;
+
+export type ListProjectsResult = {
+  listProjects: {
+    items: {
+      id: string
+      title: string
+      summary: string | null
+      description: string | null
+      avatar_url: string | null
+      banner_url: string | null
+      industry: string | null
+      owner_id: string
+      project_interests: string[]
+      project_skills: string[]
+      stage: ProjectStage
+      status: ProjectStatus
+      tags: string[]
+      visibility: ProjectVisibility
+      created_at: Date
+      updated_at: Date
+    }[]
+    page: number
+    pageSize: number
+    total: number
+  }
+}
+
+export const LIST_PROJECTS = gql`
+    query ListProjects(
+        $filters: ProjectListFiltersInput
+        $page: ProjectListPageInput
+        $sort: ProjectListSortInput
+    ) {
+        listProjects(filters: $filters, page: $page, sort: $sort) {
+            items {
+                id
+                title
+                summary
+                description
+                avatar_url
+                banner_url
+                industry
+                owner_id
+                project_interests
+                project_skills
+                stage
+                status
+                tags
+                visibility
+                created_at
+                updated_at
+            }
+            page
+            pageSize
+            total
+        }
+    }
+`;
+
+export type SearchProjectsResult = {
+    searchProjects: {
+        project: {
+            id: string
+            title: string
+            summary: string | null
+            description: string | null
+            avatar_url: string | null
+            banner_url: string | null
+            industry: string | null
+            owner_id: string
+            project_interests: string[]
+            project_skills: string[]
+            stage: ProjectStage
+            status: ProjectStatus
+            tags: string[]
+            visibility: ProjectVisibility
+            created_at: Date
+            updated_at: Date
+        }
+        reasons: string[]
+        score: number
+    }[]
+}
+
+export const SEARCH_PROJECTS = gql`
+    query SearchProjects($q: String!, $k: Int, $embedding: [Float!]) {
+        searchProjects(q: $q, k: $k, embedding: $embedding) {
+            project {
+                id
+                title
+                summary
+                description
+                avatar_url
+                banner_url
+                industry
+                owner_id
+                project_interests
+                project_skills
+                stage
+                status
+                tags
+                visibility
+                created_at
+                updated_at
+            }
+            reasons
+            score
         }
     }
 `;

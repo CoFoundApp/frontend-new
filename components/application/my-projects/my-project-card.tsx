@@ -79,7 +79,10 @@ export default function MyProjectCard({ project }: MyProjectCardProps) {
                         </DropdownMenuItem>
                         <DropdownMenuItem 
                             className="cursor-pointer text-destructive"
-                            onClick={handleDelete}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleDelete();
+                            }}
                         >
                             {loading ? (
                                 <>

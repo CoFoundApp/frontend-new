@@ -14,6 +14,7 @@ export type GetConversationsResult = {
                         id: string
                         email: string
                         profile: {
+                            id: string;
                             avatar_url: string | null
                             display_name: string | null
                         }
@@ -37,6 +38,7 @@ export const GET_CONVERSATIONS = gql`
                     id
                     email
                     profile {
+                        id
                         avatar_url
                         display_name
                     }

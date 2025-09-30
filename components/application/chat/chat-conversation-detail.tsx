@@ -6,7 +6,7 @@ import { useCurrentUser } from "@/stores/current-user"
 import { useMutation, useQuery, useSubscription } from "@apollo/client/react"
 import { formatDistanceToNow } from "date-fns"
 import { fr } from "date-fns/locale"
-import { Loader2, Send, MessageSquare } from "lucide-react"
+import { Loader2, Send, MessageSquare, User } from "lucide-react"
 import { useState, useEffect, useRef } from "react"
 import { cn } from "@/lib/utils"
 import {
@@ -19,6 +19,7 @@ import {
     type SendMessageResult,
     type MessageAddedResult,
 } from "@/graphql/conversations"
+import Link from "next/link"
 
 interface ChatConversationDetailProps {
     conversationId: string | null
@@ -152,20 +153,32 @@ export default function ChatConversationDetail({ conversationId, onBack }: ChatC
                         </svg>
                     </Button>
                 )}
-                <Avatar className="h-10 w-10 border-2 border-background shadow-sm">
-                    {otherParticipant?.profile?.avatar_url && (
-                        <AvatarImage src={otherParticipant.profile.avatar_url || "/placeholder.svg"} alt={displayName} />
-                    )}
-                    <AvatarFallback className="bg-primary text-primary-foreground font-semibold">
-                        {displayName.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-sm truncate">{displayName}</h3>
-                    {otherParticipant?.email && (
-                        <p className="text-xs text-muted-foreground truncate">{otherParticipant.email}</p>
-                    )}
-                </div>
+                <Link
+                    href={otherParticipant?.profile.id ? `/profile/${otherParticipant.profile.id}` : "#"}
+                    className="flex items-center gap-3 flex-1 min-w-0 hover:opacity-80 transition-opacity"
+                >
+                    <Avatar className="h-10 w-10 border-2 border-background shadow-sm">
+                        {otherParticipant?.profile?.avatar_url && (
+                            <AvatarImage src={otherParticipant.profile.avatar_url || "/placeholder.svg"} alt={displayName} />
+                        )}
+                        <AvatarFallback className="bg-primary text-primary-foreground font-semibold">
+                            {displayName.charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-sm truncate">{displayName}</h3>
+                        {otherParticipant?.email && (
+                            <p className="text-xs text-muted-foreground truncate">{otherParticipant.email}</p>
+                        )}
+                    </div>
+                </Link>
+                {otherParticipant?.profile.id && (
+                    <Button variant="ghost" size="icon" asChild className="h-9 w-9 shrink-0 hover:bg-background">
+                        <Link href={`/profile/${otherParticipant.profile.id}`}>
+                            <User className="h-4 w-4" />
+                        </Link>
+                    </Button>
+                )}
             </div>
 
             <div className="flex-1 min-h-0 overflow-y-auto px-4 py-4">
