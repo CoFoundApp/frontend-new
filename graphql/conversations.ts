@@ -1,5 +1,13 @@
 import { gql } from "@apollo/client"
 
+export const CREATE_CONVERSATION = gql`
+    mutation CreateConversation($user_id: String!) {
+        createConversation(user_id: $user_id) {
+            __typename
+        }
+    }
+`
+
 export type GetConversationsResult = {
     conversationsQuery:
         |   {

@@ -5,6 +5,9 @@ import { useQuery } from "@apollo/client/react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import ProjectHeader from "./project-header"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import ProjectShowMembers from "./project-show-members"
+import ProjectShowPositions from "./project-show-positions"
 
 interface ProjectLayoutProps {
     projectId: string
@@ -37,6 +40,7 @@ export default function ProjectLayout({ projectId }: ProjectLayoutProps) {
                     industry={project.industry}
                     status={project.status}
                     stage={project.stage}
+                    owner_id={project.owner_id}
                 />
 
                 {project.tags && project.tags.length > 0 && (
@@ -86,16 +90,20 @@ export default function ProjectLayout({ projectId }: ProjectLayoutProps) {
             </div>
 
             <div className="lg:col-span-2 xl:col-span-3">
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Positions disponibles</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-sm text-muted-foreground">
-                            Les positions disponibles pour ce projet seront affichées ici.
-                        </p>
-                    </CardContent>
-                </Card>
+                <Tabs defaultValue="members" className="w-full">
+                    <TabsList className="grid w-full grid-cols-2 mb-6">
+                        <TabsTrigger value="members" className="text-sm">Membres</TabsTrigger>
+                        <TabsTrigger value="positions" className="text-sm">Postes</TabsTrigger>
+                    </TabsList>
+
+                    <TabsContent value="members" className="mt-0">
+                        <ProjectShowMembers projectId={project.id} />
+                    </TabsContent>
+
+                    <TabsContent value="positions" className="mt-0">
+                        <ProjectShowPositions projectId={project.id} />
+                    </TabsContent>
+                </Tabs>
             </div>
         </div>
     );

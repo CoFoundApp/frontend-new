@@ -1,8 +1,11 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { CREATE_CONVERSATION, GET_CONVERSATIONS } from "@/graphql/conversations"
 import { projectStageConfig, projectStatusConfig } from "@/lib/utils"
-import { Building2 } from "lucide-react"
+import { useMutation } from "@apollo/client/react"
+import { Building2, MessageCircle } from "lucide-react"
 
 interface ProjectHeaderProps {
     avatar_url: string | null;
@@ -12,6 +15,7 @@ interface ProjectHeaderProps {
     industry: string | null;
     status: ProjectStatus;
     stage: ProjectStage;
+    owner_id: string;
 }
 
 export default function ProjectHeader({
@@ -22,7 +26,19 @@ export default function ProjectHeader({
     industry,
     status,
     stage,
+    owner_id,
 }: ProjectHeaderProps) {
+    const [createConversation, { loading: creatingConversation }] = useMutation(CREATE_CONVERSATION, {
+            refetchQueries: [{ query: GET_CONVERSATIONS }],
+        },
+    )
+
+    const handleContact = () => {
+        createConversation({
+            variables: { user_id: owner_id },
+        });
+    }
+
     return (
         <Card className="overflow-hidden">
             <CardContent className="p-6">
@@ -38,6 +54,11 @@ export default function ProjectHeader({
                         <h1 className="text-xl font-bold text-balance">{title}</h1>
                         {summary && <p className="text-sm text-muted-foreground text-balance leading-relaxed">{summary}</p>}
                     </div>
+
+                    <Button onClick={handleContact} disabled={creatingConversation} className="w-full" size="sm">
+                        <MessageCircle className="size-4 mr-2" />
+                        {creatingConversation ? "Création..." : "Contacter"}
+                    </Button>
                 </div>
 
                 <div className="flex flex-wrap justify-center gap-2 mb-4">

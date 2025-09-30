@@ -100,14 +100,15 @@ export default function ChatConversations({ onSelectConversation, selectedConver
                                             )}
                                         </div>
                                         <div className="flex items-center justify-between gap-2">
-                                            {conversation.last_message?.content && (
+                                            {conversation.last_message?.content ? (
                                                 <p className="text-xs text-muted-foreground truncate flex-1">
-                                                {conversation.last_message.content}
+                                                    {conversation.last_message.content}
+                                                </p>
+                                            ) : (
+                                                <p className="text-xs text-muted-foreground truncate flex-1 italic">
+                                                    Envoyez le premier message
                                                 </p>
                                             )}
-                                            <span className="h-5 w-5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center shrink-0">
-                                                2
-                                            </span>
                                         </div>
                                     </div>
                                 </button>
