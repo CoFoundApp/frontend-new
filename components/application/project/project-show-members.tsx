@@ -66,7 +66,7 @@ export default function ProjectShowMembers({ projectId }: ProjectShowMembersProp
                     </CardContent>
                 </Card>
             ) : (
-                <div className="grid xl:grid-cols-2 gap-4">
+                <div className="grid gap-4">
                     {members.map((member) => {
                         const displayName = member.users.profile?.display_name || member.users.email.split("@")[0]
 

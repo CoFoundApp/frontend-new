@@ -19,7 +19,7 @@ export function getMenuItems(pathname: string) {
                 href: "/discover",
                 label: "Découvrir",
                 icon: Search,
-                isActive: pathname.includes("/discover"),
+                isActive: pathname.includes("/discover") || pathname.includes("/profile") || pathname.includes("/projects"),
             },
         ],       
     }

@@ -7,7 +7,6 @@ import { Building2 } from "lucide-react"
 interface MyProjectsShowHeaderProps {
     avatar_url: string | null
     title: string
-    description: string | null
     summary: string | null
     industry: string | null
     status: ProjectStatus
@@ -18,7 +17,6 @@ interface MyProjectsShowHeaderProps {
 export default function MyProjectsShowHeader({
     avatar_url,
     title,
-    description,
     summary,
     industry,
     status,
@@ -64,13 +62,6 @@ export default function MyProjectsShowHeader({
                         {projectStageConfig[stage].label}
                     </Badge>
                 </div>
-
-                {description && (
-                    <div className="pt-4 border-t">
-                        <h3 className="font-medium text-sm mb-2 text-muted-foreground">Description</h3>
-                        <p className="text-sm leading-relaxed text-pretty">{description}</p>
-                    </div>
-                )}
             </CardContent>
         </Card>
     );

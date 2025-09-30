@@ -6,7 +6,7 @@ import MyProjectsShowHeader from "./my-projects-show-header";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import MyProjectsShowPositions from "./my-projects-show-positions";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import MyProjectsShowMembers from "./my-projects-show-members";
 
 interface MyProjectsShowLayoutProps {
@@ -37,7 +37,6 @@ export default function MyProjectsShowLayout({
                 <MyProjectsShowHeader
                     avatar_url={project.avatar_url}
                     title={project.title}
-                    description={project.description}
                     summary={project.summary}
                     industry={project.industry}
                     status={project.status}
@@ -91,25 +90,21 @@ export default function MyProjectsShowLayout({
                 )}
             </div>
 
-            <div className="lg:col-span-2 xl:col-span-3">
-                <Tabs defaultValue="members" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2 mb-6">
-                        <TabsTrigger value="members" className="text-sm">
-                            Membres
-                        </TabsTrigger>
-                        <TabsTrigger value="positions" className="text-sm">
-                            Postes
-                        </TabsTrigger>
-                    </TabsList>
-
-                    <TabsContent value="members" className="mt-0">
-                        <MyProjectsShowMembers projectId={project.id} />
-                    </TabsContent>
-
-                    <TabsContent value="positions" className="mt-0">
-                        <MyProjectsShowPositions projectId={project.id} />
-                    </TabsContent>
-                </Tabs>
+            <div className="lg:col-span-2 xl:col-span-3 space-y-6">
+                {project.description && (
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Description</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-sm leading-relaxed text-pretty">{project.description}</p>
+                        </CardContent>
+                    </Card>
+                )}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <MyProjectsShowMembers projectId={project.id} />
+                    <MyProjectsShowPositions projectId={project.id} />
+                </div>
             </div>
         </div>
     );

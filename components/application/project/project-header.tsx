@@ -10,7 +10,6 @@ import { Building2, MessageCircle } from "lucide-react"
 interface ProjectHeaderProps {
     avatar_url: string | null;
     title: string;
-    description: string | null;
     summary: string | null;
     industry: string | null;
     status: ProjectStatus;
@@ -21,7 +20,6 @@ interface ProjectHeaderProps {
 export default function ProjectHeader({
     avatar_url,
     title,
-    description,
     summary,
     industry,
     status,
@@ -75,13 +73,6 @@ export default function ProjectHeader({
                         {projectStageConfig[stage].label}
                     </Badge>
                 </div>
-
-                {description && (
-                    <div className="pt-4 border-t">
-                        <h3 className="font-medium text-sm mb-2 text-muted-foreground">Description</h3>
-                        <p className="text-sm leading-relaxed text-pretty">{description}</p>
-                    </div>
-                )}
             </CardContent>
         </Card>
     );

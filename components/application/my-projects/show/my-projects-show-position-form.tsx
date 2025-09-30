@@ -60,7 +60,7 @@ export default function MyProjectsShowPositionForm({
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button className="flex items-center gap-2">
+                <Button size="sm" className="flex items-center gap-2">
                     <Plus className="size-4" />
                     Nouveau poste
                 </Button>

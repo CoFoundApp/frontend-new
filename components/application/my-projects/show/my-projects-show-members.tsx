@@ -1,11 +1,12 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { GET_PROJECT_MEMBERS, GetProjectMembersResult } from "@/graphql/projects";
 import { memberRoleConfig } from "@/lib/utils";
 import { useQuery } from "@apollo/client/react";
-import { Mail, User, UserPlus, Users } from "lucide-react";
+import { Mail, Plus, User, UserPlus, Users } from "lucide-react";
 
 interface MyProjectsShowMembersProps {
     projectId: string;
@@ -56,6 +57,10 @@ export default function MyProjectsShowMembers({
                         )}
                     </h2>
                 </div>
+                <Button size="sm" className="flex items-center gap-2">
+                    <Plus className="size-4" />
+                    Inviter un utilisateur
+                </Button>
             </div>
             {!members || members.length === 0 ? (
                 <Card className="border-dashed border-2">
@@ -68,7 +73,7 @@ export default function MyProjectsShowMembers({
                     </CardContent>
                 </Card>
             ) : (
-                <div className="grid xl:grid-cols-2 gap-4">
+                <div className="grid gap-4">
                     {members.map((member) => {
                         const displayName = member.users.profile?.display_name || member.users.email.split("@")[0]
 
