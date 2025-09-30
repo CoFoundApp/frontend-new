@@ -64,13 +64,13 @@ export default function DiscoverProjectsList({ filters, sort }: DiscoverProjects
         );
     }
 
-    const projects = useSearchQuery
-        ? (data as SearchProjectsResult)?.searchProjects?.map((hit) => hit.project) || []
-        : (data as ListProjectsResult)?.listProjects?.items || [];
+    const searchHits = useSearchQuery ? (data as SearchProjectsResult)?.searchProjects || [] : []
 
-    const total = useSearchQuery
-        ? (data as SearchProjectsResult)?.searchProjects?.length || 0
-        : (data as ListProjectsResult)?.listProjects?.total || 0;
+    const projects = useSearchQuery
+        ? searchHits.map((hit) => hit.project)
+        : (data as ListProjectsResult)?.listProjects?.items || []
+
+    const total = useSearchQuery ? searchHits.length : (data as ListProjectsResult)?.listProjects?.total || 0
 
     if (projects.length === 0) {
         return (
@@ -100,9 +100,12 @@ export default function DiscoverProjectsList({ filters, sort }: DiscoverProjects
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {projects.map((project) => (
-                    <DiscoverProjectCard key={project.id} project={project} />
-                ))}
+                {useSearchQuery
+                    ? searchHits.map((hit) => (
+                        <DiscoverProjectCard key={hit.project.id} project={hit.project} score={hit.score} reasons={hit.reasons} />
+                        ))
+                    : projects.map((project) => <DiscoverProjectCard key={project.id} project={project} />)
+                }
             </div>
         </div>
     );

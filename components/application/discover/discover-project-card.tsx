@@ -5,37 +5,47 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import { cn, projectStageConfig, projectStatusConfig } from "@/lib/utils"
-import { Building2, ChevronDown } from "lucide-react"
+import { Building2, CheckCircle2, ChevronDown, Sparkles } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 interface DiscoverProjectCardProps {
     project: {
-        id: string
-        title: string
-        summary: string | null
-        avatar_url: string | null
-        banner_url: string | null
-        industry: string | null
-        stage: ProjectStage
-        status: ProjectStatus
-        project_skills: string[]
-        project_interests: string[]
-        tags: string[]
-        created_at: Date
-    }
+        id: string;
+        title: string;
+        summary: string | null;
+        avatar_url: string | null;
+        banner_url: string | null;
+        industry: string | null;
+        stage: ProjectStage;
+        status: ProjectStatus;
+        project_skills: string[];
+        project_interests: string[];
+        tags: string[];
+        created_at: Date;
+    },
+    score?: number;
+    reasons?: string[];
 }
 
-export default function DiscoverProjectCard({ project }: DiscoverProjectCardProps) {
+export default function DiscoverProjectCard({ project, score, reasons }: DiscoverProjectCardProps) {
     const router = useRouter();
     const [isExpanded, setIsExpanded] = useState(false);
+
+    const scorePercentage = score !== undefined ? Math.round(score * 100) : undefined;
 
     return (
         <Card 
             className="h-fit"
             onClick={() => router.push(`projects/${project.id}`)}
         >
-            <CardHeader>
+            <CardHeader className="flex items-center justify-between gap-4">
                 <CardTitle>{project.title}</CardTitle>
+                {scorePercentage !== undefined && (
+                    <Badge variant="secondary">
+                        <Sparkles className="size-3 mr-1" />
+                        {scorePercentage}% pertinent
+                    </Badge>
+                )}
             </CardHeader>
 
             <CardContent className="space-y-6">
@@ -45,14 +55,28 @@ export default function DiscoverProjectCard({ project }: DiscoverProjectCardProp
 
                 <div className="flex items-center gap-2 flex-wrap">
                     {project.industry && (
-                        <Badge variant="outline">
+                        <Badge>
                             <Building2 className="size-3 mr-2" />
                             {project.industry}
                         </Badge>
                     )}
-                    <Badge variant="secondary">{projectStatusConfig[project.status].label}</Badge>
-                    <Badge variant="secondary">{projectStageConfig[project.stage].label}</Badge>
+                    <Badge>{projectStatusConfig[project.status].label}</Badge>
+                    <Badge>{projectStageConfig[project.stage].label}</Badge>
                 </div>
+
+                {reasons && reasons.length > 0 && (
+                    <div className="space-y-2 p-3 bg-muted/50 rounded-lg">
+                        <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Pourquoi ce projet ?</h4>
+                        <ul className="space-y-1.5">
+                        {reasons.map((reason, index) => (
+                            <li key={index} className="flex items-start gap-2 text-sm">
+                            <CheckCircle2 className="size-4 text-primary mt-0.5 shrink-0" />
+                            <span className="text-pretty">{reason}</span>
+                            </li>
+                        ))}
+                        </ul>
+                    </div>
+                )}
 
                 {isExpanded && (
                     <div className="space-y-4 pt-4 border-t">
