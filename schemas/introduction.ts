@@ -49,6 +49,14 @@ export const IntroductionOtherSchema = z.object({
         .array(LanguageCode)
         .min(1, { message: "Sélectionnez au moins une langue." })
         .default([]),
+    skills: z
+        .array(z.string())
+        .min(1, { message: "Vous devez renseigner une compétence minimum." })
+        .default([]),
+    interests: z
+        .array(z.string())
+        .min(1, { message: "Vous devez renseigner un intérêt minimum." })
+        .default([]),
     tags: z
         .array(z.string())
         .min(1, { message: "Vous devez renseigner un tag minimum." })

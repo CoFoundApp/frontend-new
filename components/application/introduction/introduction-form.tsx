@@ -39,6 +39,8 @@ export default function IntroductionForm() {
             visibility: "PUBLIC",
             languages: [],
             tags: [],
+            skills: [],
+            interests: [],
         }
     });
 

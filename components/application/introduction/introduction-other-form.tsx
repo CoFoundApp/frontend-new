@@ -44,6 +44,40 @@ export default function IntroductionOtherForm() {
             />
             <FormField
                 control={control}
+                name="skills"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Compétences</FormLabel>
+                        <FormControl>
+                            <TagInput
+                                tags={field.value ?? []}
+                                onTagsChange={(next) => field.onChange(next)}
+                                placeholder="Tapez et Entrée pour ajouter une compétence..."
+                            />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={control}
+                name="interests"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Intérêts</FormLabel>
+                        <FormControl>
+                            <TagInput
+                                tags={field.value ?? []}
+                                onTagsChange={(next) => field.onChange(next)}
+                                placeholder="Tapez et Entrée pour ajouter un intérêt..."
+                            />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={control}
                 name="tags"
                 render={({ field }) => (
                     <FormItem>
