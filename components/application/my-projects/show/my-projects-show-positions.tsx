@@ -95,7 +95,7 @@ export default function MyProjectsShowPositions({
                     </CardContent>
                 </Card>
             ) : (
-                <div className="grid xl:grid-cols-2 gap-4">
+                <div className="grid lg:grid-cols-2 gap-4">
                     {positions.map((position) => (
                         <Card key={position.id}>
                             <CardHeader className="flex justify-between items-center gap-4">

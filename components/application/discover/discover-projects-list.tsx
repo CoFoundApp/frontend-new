@@ -22,6 +22,10 @@ export default function DiscoverProjectsList({ filters, sort }: DiscoverProjects
                 stages: filters.stages,
                 statuses: filters.statuses,
             },
+            sort: {
+                by: sort.by,
+                direction: sort.direction,
+            },
         },
         fetchPolicy: "network-only",
         errorPolicy: "all",

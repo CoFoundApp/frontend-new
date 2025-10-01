@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { CREATE_CONVERSATION, GET_CONVERSATIONS } from "@/graphql/conversations"
 import { projectStageConfig, projectStatusConfig } from "@/lib/utils"
+import { useCurrentUser } from "@/stores/current-user"
 import { useMutation } from "@apollo/client/react"
 import { Building2, MessageCircle } from "lucide-react"
 
@@ -26,6 +27,9 @@ export default function ProjectHeader({
     stage,
     owner_id,
 }: ProjectHeaderProps) {
+    const { user } = useCurrentUser();
+    const isOwner = user?.myProfile.user_id === owner_id;
+
     const [createConversation, { loading: creatingConversation }] = useMutation(CREATE_CONVERSATION, {
             refetchQueries: [{ query: GET_CONVERSATIONS }],
         },
@@ -53,10 +57,12 @@ export default function ProjectHeader({
                         {summary && <p className="text-sm text-muted-foreground text-balance leading-relaxed">{summary}</p>}
                     </div>
 
-                    <Button onClick={handleContact} disabled={creatingConversation} className="w-full" size="sm">
-                        <MessageCircle className="size-4 mr-2" />
-                        {creatingConversation ? "Création..." : "Contacter"}
-                    </Button>
+                    {isOwner && (
+                        <Button onClick={handleContact} disabled={creatingConversation} className="w-full" size="sm">
+                            <MessageCircle className="size-4 mr-2" />
+                            {creatingConversation ? "Création..." : "Contacter"}
+                        </Button>
+                    )}
                 </div>
 
                 <div className="flex flex-wrap justify-center gap-2 mb-4">

@@ -37,9 +37,9 @@ export default function MyProjectsShowMembers({
         return (
             <Card className="border-destructive/50">
                 <CardContent className="p-6">
-                <div className="text-center py-8">
-                    <p className="text-destructive">{error.message ?? String(error)}</p>
-                </div>
+                    <div className="text-center py-8">
+                        <p className="text-destructive">{error.message ?? String(error)}</p>
+                    </div>
                 </CardContent>
             </Card>
         );
@@ -73,7 +73,7 @@ export default function MyProjectsShowMembers({
                     </CardContent>
                 </Card>
             ) : (
-                <div className="grid gap-4">
+                <div className="grid lg:grid-cols-2 gap-4">
                     {members.map((member) => {
                         const displayName = member.users.profile?.display_name || member.users.email.split("@")[0]
 

@@ -1,4 +1,4 @@
-import { Folder, LayoutGrid, Search } from "lucide-react";
+import { Box, Folder, LayoutGrid, Search } from "lucide-react";
 
 export function getMenuItems(pathname: string) {
     return {
@@ -10,16 +10,22 @@ export function getMenuItems(pathname: string) {
                 isActive: pathname === "/",
             },
             {
+                href: "/discover",
+                label: "Découvrir",
+                icon: Search,
+                isActive: pathname.includes("/discover") || pathname.includes("/profile") || pathname.includes("/projects"),
+            },
+            {
                 href: "/my-projects",
                 label: "Mes projets",
                 icon: Folder,
                 isActive: pathname.includes("/my-projects"),
             },
             {
-                href: "/discover",
-                label: "Découvrir",
-                icon: Search,
-                isActive: pathname.includes("/discover") || pathname.includes("/profile") || pathname.includes("/projects"),
+                href: "/my-applications",
+                label: "Mes candidatures",
+                icon: Box,
+                isActive: pathname.includes("/my-applications"),
             },
         ],       
     }

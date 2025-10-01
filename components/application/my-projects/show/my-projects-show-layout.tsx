@@ -4,10 +4,10 @@ import { GET_PROJECT_BY_ID, GetProjectByIdResult } from "@/graphql/projects";
 import { useQuery } from "@apollo/client/react";
 import MyProjectsShowHeader from "./my-projects-show-header";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import MyProjectsShowPositions from "./my-projects-show-positions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import MyProjectsShowMembers from "./my-projects-show-members";
+import MyProjectsShowApplications from "./my-projects-show-applications";
 
 interface MyProjectsShowLayoutProps {
     projectId: string;
@@ -33,7 +33,7 @@ export default function MyProjectsShowLayout({
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            <div className="lg:col-span-1 xl:col-span-1 space-y-4">
+            <div className="lg:col-span-1 xl:col-span-1 space-y-6">
                 <MyProjectsShowHeader
                     avatar_url={project.avatar_url}
                     title={project.title}
@@ -101,10 +101,9 @@ export default function MyProjectsShowLayout({
                         </CardContent>
                     </Card>
                 )}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <MyProjectsShowMembers projectId={project.id} />
-                    <MyProjectsShowPositions projectId={project.id} />
-                </div>
+                <MyProjectsShowMembers projectId={project.id} />
+                <MyProjectsShowPositions projectId={project.id} />
+                <MyProjectsShowApplications projectId={project.id} />
             </div>
         </div>
     );

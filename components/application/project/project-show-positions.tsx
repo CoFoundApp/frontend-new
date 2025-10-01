@@ -2,13 +2,19 @@ import { GET_PROJECT_POSITIONS, type GetProjectPositionsResult } from "@/graphql
 import { useQuery } from "@apollo/client/react"
 import { Briefcase, UserPlus } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { useCurrentUser } from "@/stores/current-user"
+import ProjectApplyDialog from "./project-apply-dialog"
 
 interface ProjectShowPositionsProps {
-    projectId: string
+    projectId: string;
+    ownerId: string;
 }
 
-export default function ProjectShowPositions({ projectId }: ProjectShowPositionsProps) {
+export default function ProjectShowPositions({ projectId, ownerId }: ProjectShowPositionsProps) {
+    const { user } = useCurrentUser();
+    const isOwner = user?.myProfile.user_id === ownerId;
+
     const { data, loading, error } = useQuery<GetProjectPositionsResult>(GET_PROJECT_POSITIONS, {
         variables: { project_id: projectId },
         fetchPolicy: "network-only",
@@ -64,7 +70,7 @@ export default function ProjectShowPositions({ projectId }: ProjectShowPositions
                     </CardContent>
                 </Card>
             ) : (
-                <div className="grid xl:grid-cols-2 gap-4">
+                <div className="grid lg:grid-cols-2 gap-4">
                     {positions.map((position) => (
                         <Card key={position.id}>
                             <CardHeader>
@@ -73,6 +79,15 @@ export default function ProjectShowPositions({ projectId }: ProjectShowPositions
                                     <CardDescription className="text-sm leading-relaxed">{position.description}</CardDescription>
                                 )}
                             </CardHeader>
+                            {!isOwner && (
+                                <CardFooter>
+                                    <ProjectApplyDialog
+                                        positionId={position.id}
+                                        positionTitle={position.title}
+                                        projectId={projectId}
+                                    />
+                                </CardFooter>
+                            )}
                         </Card>
                     ))}
                 </div>

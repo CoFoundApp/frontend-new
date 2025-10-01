@@ -12,7 +12,7 @@ const wsLink =
     typeof window !== "undefined"
         ? new GraphQLWsLink(
             createClient({
-                url: process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT?.replace("http", "ws") || "",
+                url: process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT?.replace("https", "ws") || "",
                 connectionParams: {
                     credentials: "include",
                 },

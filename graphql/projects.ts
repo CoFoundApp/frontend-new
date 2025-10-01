@@ -264,3 +264,11 @@ export const SEARCH_PROJECTS = gql`
         }
     }
 `;
+
+export const APPLY_TO_PROJECT = gql`
+    mutation ApplyToProject($input: ApplyProjectInput!) {
+        applyToProject(input: $input) {
+            __typename
+        }
+    }
+`;

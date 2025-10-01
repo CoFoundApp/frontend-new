@@ -99,10 +99,8 @@ export default function ProjectLayout({ projectId }: ProjectLayoutProps) {
                         </CardContent>
                     </Card>
                 )}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <ProjectShowMembers projectId={project.id} />
-                    <ProjectShowPositions projectId={project.id} />
-                </div>
+                <ProjectShowMembers projectId={project.id} />
+                <ProjectShowPositions projectId={project.id} ownerId={project.owner_id} />
             </div>
         </div>
     );
