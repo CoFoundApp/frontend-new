@@ -35,7 +35,10 @@ export async function middleware(request: NextRequest) {
             }),
         })
 
+        console.error("Middleware token refresh error:", response);
+
         const result = await response.json()
+        console.error("Middleware token refresh error:", result.errors)
 
         if (result.errors) {
             console.error("Middleware token refresh error:", result.errors)
