@@ -16,6 +16,20 @@ export async function middleware(request: NextRequest) {
     }
 
     try {
+        const payload = JSON.parse(atob(accessToken.value.split('.')[1]))
+        const tokenExp = payload.exp * 1000
+        const now = Date.now()
+        const timeUntilExp = tokenExp - now
+        const fiveMinutes = 5 * 60 * 1000
+
+        if (timeUntilExp > fiveMinutes) {
+            return NextResponse.next()
+        }
+    } catch (error) {
+        console.log("Cannot decode token, proceeding with refresh")
+    }
+
+    try {
         const response = await fetch(process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT!, {
             method: "POST",
             headers: {
@@ -35,10 +49,7 @@ export async function middleware(request: NextRequest) {
             }),
         })
 
-        console.error("Middleware token refresh error:", response);
-
         const result = await response.json()
-        console.error("Middleware token refresh error:", result.errors)
 
         if (result.errors) {
             console.error("Middleware token refresh error:", result.errors)
