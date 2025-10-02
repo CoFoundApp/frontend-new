@@ -5,6 +5,7 @@ import { useQuery } from "@apollo/client/react";
 import MyProfileHeader from "./my-profile-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { getLanguageName } from "@/lib/languages";
 
 export default function MyProfileLayout() {
     const { data, loading, error } = useQuery<GetMyProfileResult>(GET_MY_PROFILE, {
@@ -34,6 +35,21 @@ export default function MyProfileLayout() {
                     visibility={profile.visibility}
                     website_url={profile.website_url}
                 />
+
+                {profile.languages && profile.languages.length > 0 && (
+                    <Card>
+                        <CardHeader className="gap-4">
+                            <CardTitle>Langues</CardTitle>
+                            <div className="flex flex-wrap gap-2">
+                                {profile.languages.map((languageCode) => (
+                                    <Badge key={languageCode} variant="secondary" className="text-xs">
+                                        {getLanguageName(languageCode)}
+                                    </Badge>
+                                ))}
+                            </div>
+                        </CardHeader>
+                    </Card>
+                )}
 
                 {profile.tags && profile.tags.length > 0 && (
                     <Card>

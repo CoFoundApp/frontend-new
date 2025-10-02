@@ -15,6 +15,7 @@ export type GetMyProfileResult = {
         bio: string | null;
         display_name: string | null;
         headline: string | null;
+        languages: string[];
         location: string | null;
         looking_for: string | null;
         tags: string[];
@@ -31,6 +32,7 @@ export const GET_MY_PROFILE = gql`
             bio
             display_name
             headline
+            languages
             location
             looking_for
             tags
@@ -48,6 +50,7 @@ export const GET_PROFILE_BY_ID = gql`
             bio
             display_name
             headline
+            languages
             location
             looking_for
             tags
@@ -67,6 +70,7 @@ export type GetProfileByIdResult = {
         bio: string | null
         display_name: string | null
         headline: string | null
+        languages: string[]
         location: string | null
         looking_for: string | null
         tags: string[]

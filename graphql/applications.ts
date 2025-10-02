@@ -172,3 +172,11 @@ export const GET_PROJECT_APPLICATIONS = gql`
         }
     }
 `;
+
+export const WITHDRAW_PROJECT_APPLICATION = gql`
+    mutation WithdrawProjectApplication($id: String!) {
+        withdrawProjectApplication(id: $id) {
+            __typename
+        }
+    }
+`;

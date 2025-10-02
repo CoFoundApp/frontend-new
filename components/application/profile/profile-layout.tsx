@@ -9,6 +9,7 @@ import { AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import ProfileHeader from "./profile-header"
+import { getLanguageName } from "@/lib/languages"
 
 interface ProfileLayoutProps {
   profileId: string
@@ -79,12 +80,25 @@ export default function ProfileLayout({ profileId }: ProfileLayoutProps) {
                     website_url={profile.website_url}
                 />
 
+                {profile.languages && profile.languages.length > 0 && (
+                    <Card>
+                        <CardHeader className="gap-4">
+                            <CardTitle>Langues</CardTitle>
+                            <div className="flex flex-wrap gap-2">
+                                {profile.languages.map((languageCode) => (
+                                    <Badge key={languageCode} variant="secondary" className="text-xs">
+                                        {getLanguageName(languageCode)}
+                                    </Badge>
+                                ))}
+                            </div>
+                        </CardHeader>
+                    </Card>
+                )}
+
                 {profile.tags && profile.tags.length > 0 && (
                     <Card>
-                        <CardHeader>
+                        <CardHeader className="gap-4">
                             <CardTitle>Tags</CardTitle>
-                        </CardHeader>
-                        <CardContent>
                             <div className="flex flex-wrap gap-2">
                                 {profile.tags.map((tag) => (
                                     <Badge key={tag} variant="secondary" className="text-xs">
@@ -92,7 +106,7 @@ export default function ProfileLayout({ profileId }: ProfileLayoutProps) {
                                     </Badge>
                                 ))}
                             </div>
-                        </CardContent>
+                        </CardHeader>
                     </Card>
                 )}
             </div>

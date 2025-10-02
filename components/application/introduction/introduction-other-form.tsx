@@ -4,14 +4,7 @@ import { useFormContext } from "react-hook-form";
 import z from "zod";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { TagInput } from "@/components/ui/tag-input";
-
-const LANGUAGE_OPTIONS = [
-    { label: "Allemand", value: "de" },
-    { label: "Anglais", value: "en" },
-    { label: "Espagnol", value: "es" },
-    { label: "Français", value: "fr" },
-    { label: "Italien", value: "it" },
-] as const;
+import { LANGUAGE_OPTIONS } from "@/lib/languages";
 
 export default function IntroductionOtherForm() {
     const { control } = useFormContext<z.infer<typeof IntroductionOtherSchema>>();
