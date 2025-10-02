@@ -1,11 +1,10 @@
 "use client"
 
-import { GET_PROJECT_BY_ID, type GetProjectByIdResult } from "@/graphql/projects"
+import { GET_PROJECT_BY_ID, GET_PROJECT_MEMBERS, GetProjectMembersResult, type GetProjectByIdResult } from "@/graphql/projects"
 import { useQuery } from "@apollo/client/react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import ProjectHeader from "./project-header"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import ProjectShowMembers from "./project-show-members"
 import ProjectShowPositions from "./project-show-positions"
 
@@ -19,7 +18,13 @@ export default function ProjectLayout({ projectId }: ProjectLayoutProps) {
         fetchPolicy: "network-only",
     });
 
+    const { data: membersData, loading: membersLoading } = useQuery<GetProjectMembersResult>(GET_PROJECT_MEMBERS, {
+        variables: { project_id: projectId },
+        fetchPolicy: "network-only",
+    });
+
     const project = data?.projectById;
+    const members = membersData?.projectMembers;
 
     if (loading) {
         return <p>Chargement...</p>;
@@ -99,7 +104,7 @@ export default function ProjectLayout({ projectId }: ProjectLayoutProps) {
                         </CardContent>
                     </Card>
                 )}
-                <ProjectShowMembers projectId={project.id} />
+                <ProjectShowMembers members={members} loading={membersLoading} />
                 <ProjectShowPositions projectId={project.id} ownerId={project.owner_id} />
             </div>
         </div>

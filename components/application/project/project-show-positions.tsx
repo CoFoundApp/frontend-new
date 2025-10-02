@@ -1,4 +1,4 @@
-import { GET_PROJECT_POSITIONS, type GetProjectPositionsResult } from "@/graphql/projects"
+import { GET_PROJECT_POSITIONS, GetProjectMembersResult, type GetProjectPositionsResult } from "@/graphql/projects"
 import { useQuery } from "@apollo/client/react"
 import { Briefcase, UserPlus } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -9,16 +9,19 @@ import ProjectApplyDialog from "./project-apply-dialog"
 interface ProjectShowPositionsProps {
     projectId: string;
     ownerId: string;
+    members?: GetProjectMembersResult["projectMembers"]
 }
 
-export default function ProjectShowPositions({ projectId, ownerId }: ProjectShowPositionsProps) {
+export default function ProjectShowPositions({ projectId, ownerId, members }: ProjectShowPositionsProps) {
     const { user } = useCurrentUser();
     const isOwner = user?.myProfile.user_id === ownerId;
 
     const { data, loading, error } = useQuery<GetProjectPositionsResult>(GET_PROJECT_POSITIONS, {
         variables: { project_id: projectId },
         fetchPolicy: "network-only",
-    })
+    });
+
+    const isMember = members?.some((member) => member.users.id === user?.myProfile.user_id);
 
     const positions = data?.listProjectPositions?.filter((position) => position.status === "OPEN")
 
@@ -79,7 +82,7 @@ export default function ProjectShowPositions({ projectId, ownerId }: ProjectShow
                                     <CardDescription className="text-sm leading-relaxed">{position.description}</CardDescription>
                                 )}
                             </CardHeader>
-                            {!isOwner && (
+                            {!isOwner || !isMember && (
                                 <CardFooter>
                                     <ProjectApplyDialog
                                         positionId={position.id}

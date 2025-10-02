@@ -2,43 +2,24 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
-import { GET_PROJECT_MEMBERS, type GetProjectMembersResult } from "@/graphql/projects"
+import { type GetProjectMembersResult } from "@/graphql/projects"
 import { memberRoleConfig } from "@/lib/utils"
-import { useQuery } from "@apollo/client/react"
 import { Mail, User, Users } from "lucide-react"
 
 interface ProjectShowMembersProps {
-    projectId: string
+    members?: GetProjectMembersResult["projectMembers"]
+    loading?: boolean
 }
 
-export default function ProjectShowMembers({ projectId }: ProjectShowMembersProps) {
-    const { data, loading, error } = useQuery<GetProjectMembersResult>(GET_PROJECT_MEMBERS, {
-        variables: { project_id: projectId },
-        fetchPolicy: "network-only",
-    });
-
-    const members = data?.projectMembers
-
+export default function ProjectShowMembers({ members, loading }: ProjectShowMembersProps) {
     if (loading) {
         return (
-        <div className="space-y-4">
-            <div className="flex items-center gap-2">
-            <Skeleton className="h-6 w-32" />
+            <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                <Skeleton className="h-6 w-32" />
+                </div>
+                <Skeleton className="w-full h-48" />
             </div>
-            <Skeleton className="w-full h-48" />
-        </div>
-        )
-    }
-
-    if (error) {
-        return (
-        <Card className="border-destructive/50">
-            <CardContent className="p-6">
-            <div className="text-center py-8">
-                <p className="text-destructive">{error.message ?? String(error)}</p>
-            </div>
-            </CardContent>
-        </Card>
         )
     }
 
