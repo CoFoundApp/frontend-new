@@ -263,7 +263,7 @@ export default function MyProjectsShowApplications({ projectId }: MyProjectsShow
 
                                             {application.decided_at && (
                                                 <p className="text-xs text-muted-foreground mt-2">
-                                                    Décidée le {new Date(application.decided_at).toLocaleDateString("fr-FR")}
+                                                    Décision prise le {new Date(application.decided_at).toLocaleDateString("fr-FR")}
                                                 </p>
                                             )}
                                         </div>

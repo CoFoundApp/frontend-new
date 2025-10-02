@@ -35,7 +35,7 @@ export default function DiscoverProjectCard({ project, score, reasons }: Discove
 
     return (
         <Card 
-            className="h-fit"
+            className="h-full flex flex-col"
             onClick={() => router.push(`projects/${project.id}`)}
         >
             <CardHeader className="flex items-center justify-between gap-4">
@@ -48,9 +48,9 @@ export default function DiscoverProjectCard({ project, score, reasons }: Discove
                 )}
             </CardHeader>
 
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-6 flex-1 flex flex-col">
                 {project.summary && (
-                    <p className="text-sm text-muted-foreground leading-relaxed text-pretty">{project.summary}</p>
+                    <p className="text-sm text-muted-foreground leading-relaxed text-pretty line-clamp-3">{project.summary}</p>
                 )}
 
                 <div className="flex items-center gap-2 flex-wrap">
@@ -124,7 +124,7 @@ export default function DiscoverProjectCard({ project, score, reasons }: Discove
                 <Button
                     variant="ghost"
                     size="sm"
-                    className="w-full justify-between group"
+                    className="w-full justify-between group mt-auto"
                     onClick={(e) => {
                         e.stopPropagation();
                         setIsExpanded(!isExpanded);
