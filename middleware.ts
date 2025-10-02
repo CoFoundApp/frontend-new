@@ -19,7 +19,8 @@ export async function middleware(request: NextRequest) {
         const response = await fetch(process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT!, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
             },
             credentials: "include",
             body: JSON.stringify({
@@ -37,6 +38,7 @@ export async function middleware(request: NextRequest) {
         const result = await response.json()
 
         if (result.errors) {
+            console.error("Middleware token refresh error:", result.errors)
             return NextResponse.redirect(new URL("/login", request.url))
         }
 
