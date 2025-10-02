@@ -91,7 +91,7 @@ export type GetProjectPositionsResult = {
     listProjectPositions: {
         id: string;
         title: string;
-        status: ProjectStatus;
+        status: PositionStatus;
         description: string;
     }[] | null;
 };
