@@ -15,7 +15,36 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL("/login", request.url))
     }
 
-    return NextResponse.next();
+    try {
+        const response = await fetch(process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT!, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify({
+                query: `
+                    mutation Refresh {
+                        refresh {
+                            accessToken
+                            refreshToken
+                        }
+                    }
+                    `,
+            }),
+        })
+
+        const result = await response.json()
+
+        if (result.errors) {
+            return NextResponse.redirect(new URL("/login", request.url))
+        }
+
+        return NextResponse.next()
+    } catch (error) {
+        console.error("Middleware token refresh error:", error)
+        return NextResponse.next()
+    }
 }
 
 export const config = {
