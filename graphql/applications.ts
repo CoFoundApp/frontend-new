@@ -173,6 +173,22 @@ export const GET_PROJECT_APPLICATIONS = gql`
     }
 `;
 
+export const DECIDE_PROJECT_APPLICATION = gql`
+    mutation DecideProjectApplication(
+        $id: String!
+        $position_id: String!
+        $status: ApplicationStatus!
+    ) {
+        decideProjectApplication(
+            id: $id
+            position_id: $position_id
+            status: $status
+        ) {
+            __typename
+        }
+    }
+`;
+
 export const WITHDRAW_PROJECT_APPLICATION = gql`
     mutation WithdrawProjectApplication($id: String!) {
         withdrawProjectApplication(id: $id) {

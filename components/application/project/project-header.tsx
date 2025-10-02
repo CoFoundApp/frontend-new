@@ -56,16 +56,9 @@ export default function ProjectHeader({
                         <h1 className="text-xl font-bold text-balance">{title}</h1>
                         {summary && <p className="text-sm text-muted-foreground text-balance leading-relaxed">{summary}</p>}
                     </div>
-
-                    {isOwner && (
-                        <Button onClick={handleContact} disabled={creatingConversation} className="w-full" size="sm">
-                            <MessageCircle className="size-4 mr-2" />
-                            {creatingConversation ? "Création..." : "Contacter"}
-                        </Button>
-                    )}
                 </div>
 
-                <div className="flex flex-wrap justify-center gap-2 mb-4">
+                <div className="flex flex-wrap justify-center gap-2 mb-6">
                     {industry && (
                         <Badge variant="outline" className="text-xs">
                             <Building2 className="size-3 mr-1" />
@@ -79,6 +72,13 @@ export default function ProjectHeader({
                         {projectStageConfig[stage].label}
                     </Badge>
                 </div>
+
+                {!isOwner && (
+                    <Button onClick={handleContact} disabled={creatingConversation} className="w-full" size="sm">
+                        <MessageCircle className="size-4 mr-2" />
+                        {creatingConversation ? "Création..." : "Contacter"}
+                    </Button>
+                )}
             </CardContent>
         </Card>
     );

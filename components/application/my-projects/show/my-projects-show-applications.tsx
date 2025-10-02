@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import {
+    DECIDE_PROJECT_APPLICATION,
   GET_PROJECT_APPLICATIONS,
   type GetProjectApplicationsResult,
 } from "@/graphql/applications"
@@ -14,6 +15,8 @@ import { Check, FileText, Mail, UserCheck, Users, X } from "lucide-react"
 import { toast } from "sonner"
 import { useState } from "react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Separator } from "@/components/ui/separator"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
 
 interface MyProjectsShowApplicationsProps {
     projectId: string
@@ -33,6 +36,13 @@ const applicationStatusConfig: Record<
 export default function MyProjectsShowApplications({ projectId }: MyProjectsShowApplicationsProps) {
     const [statusFilter, setStatusFilter] = useState<ApplicationStatus | "ALL">("PENDING")
     const [positionFilter, setPositionFilter] = useState<string>("ALL")
+    const [decisionDialog, setDecisionDialog] = useState<{
+        open: boolean
+        applicationId: string
+        positionId: string
+        status: "ACCEPTED" | "REJECTED"
+        applicantName: string
+    } | null>(null)
 
     const { data, loading, error } = useQuery<GetProjectApplicationsResult>(GET_PROJECT_APPLICATIONS, {
         variables: {
@@ -42,6 +52,57 @@ export default function MyProjectsShowApplications({ projectId }: MyProjectsShow
         },
         fetchPolicy: "network-only",
     });
+
+    const [decideApplication, { loading: isDeciding }] = useMutation(DECIDE_PROJECT_APPLICATION, {
+        refetchQueries: [
+            {
+                query: GET_PROJECT_APPLICATIONS,
+                variables: { project_id: projectId },
+            },
+        ],
+    })
+
+    const handleDecisionClick = (
+        applicationId: string,
+        positionId: string,
+        status: "ACCEPTED" | "REJECTED",
+        applicantName: string,
+    ) => {
+        setDecisionDialog({
+            open: true,
+            applicationId,
+            positionId,
+            status,
+            applicantName,
+        })
+    }
+
+    const handleConfirmDecision = () => {
+        if (!decisionDialog) return
+
+        decideApplication({
+            variables: {
+                id: decisionDialog.applicationId,
+                position_id: decisionDialog.positionId,
+                status: decisionDialog.status,
+            },
+        })
+            .then(() => {
+                toast.success(decisionDialog.status === "ACCEPTED" ? "Candidature acceptée !" : "Candidature refusée", {
+                description:
+                    decisionDialog.status === "ACCEPTED"
+                    ? "Le candidat a été accepté avec succès."
+                    : "Le candidat a été refusé.",
+                })
+                setDecisionDialog(null)
+            })
+            .catch((err: Error) => {
+                toast.error("Oups !", {
+                    description: err.message || "Une erreur est survenue.",
+                })
+                setDecisionDialog(null)
+            })
+    }
 
     const applications = data?.projectApplications?.items || [];
 
@@ -131,6 +192,7 @@ export default function MyProjectsShowApplications({ projectId }: MyProjectsShow
                 <div className="grid lg:grid-cols-2 gap-4">
                     {applications.map((application) => {
                         const displayName = application.applicant.profile?.display_name || application.applicant.email.split("@")[0]
+                        const isPending = application.status === "PENDING"
 
                         return (
                             <Card key={application.id}>
@@ -142,7 +204,7 @@ export default function MyProjectsShowApplications({ projectId }: MyProjectsShow
                                                 {displayName.charAt(0).toUpperCase()}
                                             </AvatarFallback>
                                         </Avatar>
-                                        <div className="flex-1 min-w-0">
+                                        <div className="flex-1 min-w-0 space-y-3">
                                             <div className="flex items-start justify-between gap-2">
                                                 <div className="flex-1 min-w-0">
                                                     <CardTitle className="text-base leading-tight">{displayName}</CardTitle>
@@ -170,6 +232,35 @@ export default function MyProjectsShowApplications({ projectId }: MyProjectsShow
                                                 </div>
                                             )}
 
+                                            {isPending && (
+                                                <>
+                                                    <Separator />
+                                                    <div className="flex gap-2 pt-1">
+                                                        <Button
+                                                            size="sm"
+                                                            className="gap-2"
+                                                            onClick={() =>
+                                                                handleDecisionClick(application.id, application.position_id, "ACCEPTED", displayName)
+                                                            }
+                                                        >
+                                                            <Check className="size-4" />
+                                                            Accepter
+                                                        </Button>
+                                                        <Button
+                                                            size="sm"
+                                                            variant="outline"
+                                                            className="gap-2 bg-transparent"
+                                                            onClick={() =>
+                                                                handleDecisionClick(application.id, application.position_id, "REJECTED", displayName)
+                                                            }
+                                                        >
+                                                            <X className="size-4" />
+                                                            Refuser
+                                                        </Button>
+                                                    </div>
+                                                </>
+                                            )}
+
                                             {application.decided_at && (
                                                 <p className="text-xs text-muted-foreground mt-2">
                                                     Décidée le {new Date(application.decided_at).toLocaleDateString("fr-FR")}
@@ -183,6 +274,39 @@ export default function MyProjectsShowApplications({ projectId }: MyProjectsShow
                     })}
                 </div>
             )}
+
+            <AlertDialog open={decisionDialog?.open ?? false} onOpenChange={(open) => !open && setDecisionDialog(null)}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>
+                            {decisionDialog?.status === "ACCEPTED" ? "Accepter cette candidature ?" : "Refuser cette candidature ?"}
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                            {decisionDialog?.status === "ACCEPTED" ? (
+                                <>
+                                Vous êtes sur le point d'accepter la candidature de <strong>{decisionDialog?.applicantName}</strong>.
+                                Cette action est définitive.
+                                </>
+                            ) : (
+                                <>
+                                Vous êtes sur le point de refuser la candidature de <strong>{decisionDialog?.applicantName}</strong>.
+                                Cette action est définitive.
+                                </>
+                            )}
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Annuler</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={handleConfirmDecision}
+                            disabled={isDeciding}
+                            className={decisionDialog?.status === "REJECTED" ? "bg-destructive hover:bg-destructive/90" : ""}
+                        >
+                            {isDeciding ? "Traitement..." : decisionDialog?.status === "ACCEPTED" ? "Accepter" : "Refuser"}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     )
 }

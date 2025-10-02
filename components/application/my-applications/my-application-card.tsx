@@ -11,13 +11,23 @@ import { useMutation } from "@apollo/client/react"
 import { GET_MY_APPLICATIONS, WITHDRAW_PROJECT_APPLICATION } from "@/graphql/applications"
 import { Button } from "@/components/ui/button"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
+import { Badge } from "@/components/ui/badge"
 
 interface MyApplicationCardProps {
   application: IProjectApplication
 }
 
+const applicationStatusConfig = {
+    PENDING: { label: "En attente" },
+    ACCEPTED: { label: "Acceptée" },
+    REJECTED: { label: "Refusée" },
+    WITHDRAWN: { label: "Retirée" },
+    CANCELED: { label: "Annulée" },
+}
+
 export default function MyApplicationCard({ application }: MyApplicationCardProps) {
     const router = useRouter()
+    const statusConfig = applicationStatusConfig[application.status as keyof typeof applicationStatusConfig]
 
     const [withdrawApplication, { loading: withdrawing }] = useMutation(WITHDRAW_PROJECT_APPLICATION, {
         refetchQueries: [{ query: GET_MY_APPLICATIONS }],
@@ -102,7 +112,7 @@ export default function MyApplicationCard({ application }: MyApplicationCardProp
                 )}
             </CardContent>
 
-            <CardFooter className="pt-3 border-t">
+            <CardFooter className="flex items-center justify-between pt-3 border-t">
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                     <Calendar className="size-3" />
                     <span>
@@ -113,6 +123,7 @@ export default function MyApplicationCard({ application }: MyApplicationCardProp
                         })}
                     </span>
                 </div>
+                <Badge variant="secondary" className="mt-2">{statusConfig.label}</Badge>
             </CardFooter>
         </Card>
     )
