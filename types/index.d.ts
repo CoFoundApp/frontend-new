@@ -54,3 +54,24 @@ interface IProjectApplication {
         industry?: string
     }
 }
+
+interface IEducation {
+    degree: string | null;
+    description: string | null;
+    end_date: string | null;
+    field_of_study: string | null;
+    grade: string | null;
+    is_current: boolean;
+    school: string;
+    start_date: string;
+}
+
+interface IWorkExperience {
+    company: string;
+    description: string | null;
+    end_date: string | null;
+    is_current: boolean;
+    location: string | null;
+    start_date: string;
+    title: string;
+}

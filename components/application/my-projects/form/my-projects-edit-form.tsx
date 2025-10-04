@@ -6,7 +6,7 @@ import { Form } from "@/components/ui/form";
 import { ProjectCollectionSchema, ProjectGeneralSchema, ProjectSettingsSchema } from "@/schemas/projects";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { defineStepper } from "@stepperize/react";
-import { Loader2, Plus } from "lucide-react";
+import { Edit, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
@@ -14,10 +14,9 @@ import MyProjectsGeneralForm from "./my-projects-general-form";
 import MyProjectsSettingsForm from "./my-projects-settings-form";
 import MyProjectsComplete from "./my-projects-complete";
 import MyProjectsCollectionsForm from "./my-projects-collections-form";
-import { useMutation } from "@apollo/client/react";
-import { CREATE_PROJECT, GET_MY_PROJECTS } from "@/graphql/projects";
+import { useMutation, useQuery } from "@apollo/client/react";
+import { GET_MY_PROJECTS, GET_PROJECT_BY_ID, GetProjectByIdResult, UPDATE_PROJECT } from "@/graphql/projects";
 import { toast } from "sonner";
-import { sideCannons } from "@/lib/utils";
 
 const { useStepper, steps, utils } = defineStepper(
     { id: "general", label: "Général", schema: ProjectGeneralSchema },
@@ -26,31 +25,46 @@ const { useStepper, steps, utils } = defineStepper(
     { id: "complete", label: "Fin", schema: z.object({}) },
 );
 
-export default function MyProjectsForm() {
+interface MyProjectsEditFormProps {
+    projectId: string;
+}
+
+export default function MyProjectsEditForm({ projectId }: MyProjectsEditFormProps) {
     const [open, setOpen] = useState(false);
     const stepper = useStepper();
 
-    const [createProject, { loading }] = useMutation(CREATE_PROJECT, {
-        refetchQueries: [GET_MY_PROJECTS],
-    });
+    const { data, loading: loadingProject } = useQuery<GetProjectByIdResult>(GET_PROJECT_BY_ID, {
+        variables: { id: projectId },
+    })
+
+    const [updateProject, { loading }] = useMutation(UPDATE_PROJECT, {
+        refetchQueries: [GET_MY_PROJECTS, { query: GET_PROJECT_BY_ID, variables: { id: projectId } }],
+    })
 
     const form = useForm({
         resolver: zodResolver(stepper.current.schema),
-        defaultValues: {
-            status: "DRAFT",
-            stage: "IDEA",
-            visibility: "PRIVATE",
-            tags: [],
-            project_interests: [],
-            project_skills: [],
-        },
+        values: data?.projectById
+            ?   {
+                    title: data.projectById.title,
+                    summary: data.projectById.summary ?? "",
+                    description: data.projectById.description ?? "",
+                    industry: data.projectById.industry ?? "",
+                    status: data.projectById.status,
+                    stage: data.projectById.stage,
+                    visibility: data.projectById.visibility,
+                    tags: data.projectById.tags,
+                    project_interests: data.projectById.project_interests ?? [],
+                    project_skills: data.projectById.project_skills ?? [],
+                }
+            : undefined,
         mode: "onTouched",
     });
 
     const onSubmit = (values: z.infer<typeof stepper.current.schema>) => {
         if (stepper.isLast) {
-            createProject({
+            updateProject({
                 variables: {
+                    id: projectId,
                     input: {
                         ...form.getValues(),
                         ...values
@@ -58,11 +72,10 @@ export default function MyProjectsForm() {
                 }
             })
                 .then(() => {
-                    form.reset();
+                    stepper.reset();
                     setOpen(false);
-                    sideCannons();
-                    toast.success("Projet créé !", {
-                        description: "Vous avez créé votre projet avec succès.",
+                    toast.success("Projet modifié !", {
+                        description: "Vous avez modifié votre projet avec succès.",
                     });
                 })
                 .catch((err: Error) => {
@@ -82,13 +95,13 @@ export default function MyProjectsForm() {
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <Button size="sm" variant="secondary" className="flex items-center gap-2">
-                    <Plus className="size-4" />
-                    Nouveau projet
+                    <Edit className="size-4" />
+                    Modifier mon projet
                 </Button>
             </DialogTrigger>
             <DialogContent className="!w-full !max-w-2xl">
                 <DialogHeader>
-                    <DialogTitle>Ajouter un projet</DialogTitle>
+                    <DialogTitle>Modifier le projet</DialogTitle>
                     <DialogDescription>Étape {currentIndex + 1} sur {steps.length}</DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -118,7 +131,7 @@ export default function MyProjectsForm() {
                                             Chargement...
                                         </>
                                     ) : (
-                                        "Créer votre projet"
+                                        "Modifier votre projet"
                                     )}
                                 </Button>
                             )}

@@ -1,3 +1,4 @@
+import MyProjectsEditForm from "@/components/application/my-projects/form/my-projects-edit-form";
 import MyProjectsShowLayout from "@/components/application/my-projects/show/my-projects-show-layout";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
@@ -30,6 +31,7 @@ export default async function MyProjectsShowPage({ params }: { params: Promise<{
                         </BreadcrumbList>
                     </Breadcrumb>
                 </div>
+                <MyProjectsEditForm projectId={id} />
             </header>
             <div className="flex flex-1 flex-col p-4">
                 <MyProjectsShowLayout projectId={id} />

@@ -57,10 +57,6 @@ export default function MyProjectsShowMembers({
                         )}
                     </h2>
                 </div>
-                <Button size="sm" className="flex items-center gap-2">
-                    <Plus className="size-4" />
-                    Inviter un utilisateur
-                </Button>
             </div>
             {!members || members.length === 0 ? (
                 <Card className="border-dashed border-2">

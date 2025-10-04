@@ -3,22 +3,19 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useCurrentUser } from "@/stores/current-user"
-import { useMutation, useQuery, useSubscription } from "@apollo/client/react"
+import { useQuery } from "@apollo/client/react"
 import { formatDistanceToNow } from "date-fns"
 import { fr } from "date-fns/locale"
-import { Loader2, Send, MessageSquare, User } from "lucide-react"
+import { Loader2, Send, MessageSquare, User, Wifi, WifiOff } from "lucide-react"
 import { useState, useEffect, useRef } from "react"
 import { cn } from "@/lib/utils"
 import {
     GET_CONVERSATIONS,
     GET_MESSAGES,
-    SEND_MESSAGE,
-    MESSAGE_ADDED_SUBSCRIPTION,
     type GetConversationsResult,
     type GetMessagesResult,
-    type SendMessageResult,
-    type MessageAddedResult,
 } from "@/graphql/conversations"
+import { useSocket } from "@/hooks/useSocket"
 import Link from "next/link"
 
 interface ChatConversationDetailProps {
@@ -26,11 +23,23 @@ interface ChatConversationDetailProps {
     onBack?: () => void
 }
 
+interface SocketMessage {
+    room: string;
+    from: string;
+    content: string;
+    at: number;
+}
+
+const formatSocketMessageForDisplay = (socketMsg: SocketMessage, messageId: string) => ({
+    id: messageId,
+    content: socketMsg.content,
+    sender_id: socketMsg.from,
+    created_at: new Date(socketMsg.at).toISOString(),
+})
+
 const shouldGroupMessages = (currentMsg: any, previousMsg: any, currentUserId: string | undefined): boolean => {
     if (!previousMsg || !currentMsg) return false
-
     if (currentMsg.sender_id !== previousMsg.sender_id) return false
-
     const timeDiff = new Date(currentMsg.created_at).getTime() - new Date(previousMsg.created_at).getTime()
     return timeDiff < 60000
 }
@@ -38,7 +47,13 @@ const shouldGroupMessages = (currentMsg: any, previousMsg: any, currentUserId: s
 export default function ChatConversationDetail({ conversationId, onBack }: ChatConversationDetailProps) {
     const { user } = useCurrentUser()
     const [messageInput, setMessageInput] = useState("")
+    const [realtimeMessages, setRealtimeMessages] = useState<any[]>([])
+    const [sendingMessage, setSendingMessage] = useState(false)
     const messagesEndRef = useRef<HTMLDivElement>(null)
+
+    const { socket, isConnected, joinRoom, sendMessage } = useSocket({
+        userId: user?.myProfile.user_id,
+    });
 
     const { data: conversationsData } = useQuery<GetConversationsResult>(GET_CONVERSATIONS, {
         fetchPolicy: "cache-first",
@@ -54,48 +69,41 @@ export default function ChatConversationDetail({ conversationId, onBack }: ChatC
         errorPolicy: "all",
     })
 
-    const [sendMessage, { loading: sendingMessage }] = useMutation<SendMessageResult>(SEND_MESSAGE, {
-        refetchQueries: [
-            {
-                query: GET_MESSAGES,
-                variables: {
-                    conversation_id: conversationId,
-                    limit: 50,
-                },
-            },
-            {
-                query: GET_CONVERSATIONS,
-            },
-        ],
-        onError: (error) => {
-            console.error("Error sending message:", error)
-        },
-    })
-
-    const { data: subscriptionData, error: subscriptionError } = useSubscription<MessageAddedResult>(
-        MESSAGE_ADDED_SUBSCRIPTION,
-        {
-            variables: { conversation_id: conversationId },
-            skip: !conversationId,
-            onData: ({ data }) => {
-                console.log("New message received:", data.data?.messageAdded)
-            },
-            onError: (error) => {
-                console.error("Subscription error:", error)
-            },
-            shouldResubscribe: true,
-        },
-    )
-
     useEffect(() => {
-        if (subscriptionError) {
-            console.error("Subscription connection error:", subscriptionError)
+        if (socket && conversationId) {
+            joinRoom(conversationId);
+
+            const handleNewMessage = (message: SocketMessage) => {
+                console.log('📨 New message received via Socket.IO:', message);
+                
+                const formattedMessage = formatSocketMessageForDisplay(
+                    message, 
+                    `socket-${Date.now()}-${Math.random()}`
+                );
+                
+                setRealtimeMessages(prev => [...prev, formattedMessage]);
+            };
+
+            socket.on('message:new', handleNewMessage);
+            socket.on('room:joined', (data) => {
+                console.log('✅ Joined room:', data);
+            });
+
+            return () => {
+                socket.off('message:new', handleNewMessage);
+                socket.off('room:joined');
+            };
         }
-    }, [subscriptionError])
+    }, [socket, conversationId, joinRoom]);
+
+    const allMessages = [
+        ...(data?.messages.items || []),
+        ...realtimeMessages
+    ].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-    }, [data?.messages.items])
+    }, [allMessages])
 
     if (!conversationId) {
         return (
@@ -115,21 +123,17 @@ export default function ChatConversationDetail({ conversationId, onBack }: ChatC
     const otherParticipant = conversation?.participants.find((p) => p.user.id !== user?.myProfile.user_id)?.user
     const displayName = otherParticipant?.profile?.display_name || otherParticipant?.email || "Utilisateur"
 
-    const messages = data?.messages.items || []
-
     const handleSendMessage = async () => {
         if (!messageInput.trim() || !conversationId) return
 
+        setSendingMessage(true)
         try {
-            await sendMessage({
-                variables: {
-                content: messageInput.trim(),
-                conversation_id: conversationId,
-                },
-            })
+            await sendMessage(conversationId, messageInput.trim());
             setMessageInput("")
         } catch (error) {
-            console.error("Failed to send message:", error)
+            console.error("Failed to send message via Socket.IO:", error)
+        } finally {
+            setSendingMessage(false)
         }
     }
 
@@ -172,6 +176,7 @@ export default function ChatConversationDetail({ conversationId, onBack }: ChatC
                         )}
                     </div>
                 </Link>
+
                 {otherParticipant?.profile.id && (
                     <Button variant="ghost" size="icon" asChild className="h-9 w-9 shrink-0 hover:bg-background">
                         <Link href={`/profile/${otherParticipant.profile.id}`}>
@@ -194,7 +199,7 @@ export default function ChatConversationDetail({ conversationId, onBack }: ChatC
                     </div>
                 )}
 
-                {!loading && !error && messages.length === 0 && (
+                {!loading && !error && allMessages.length === 0 && (
                     <div className="flex flex-col items-center justify-center py-12 text-center">
                         <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4">
                             <MessageSquare className="h-8 w-8 text-muted-foreground/50" />
@@ -204,13 +209,13 @@ export default function ChatConversationDetail({ conversationId, onBack }: ChatC
                     </div>
                 )}
 
-                {!loading && messages.length > 0 && (
+                {!loading && allMessages.length > 0 && (
                     <div className="space-y-1">
-                        {messages.map((message, index) => {
+                        {allMessages.map((message, index) => {
                             const isCurrentUser = message.sender_id === user?.myProfile.user_id
-                            const previousMessage = index > 0 ? messages[index - 1] : null
+                            const previousMessage = index > 0 ? allMessages[index - 1] : null
                             const isGrouped = shouldGroupMessages(message, previousMessage, user?.myProfile.user_id)
-                            const nextMessage = index < messages.length - 1 ? messages[index + 1] : null
+                            const nextMessage = index < allMessages.length - 1 ? allMessages[index + 1] : null
                             const isLastInGroup = !shouldGroupMessages(nextMessage, message, user?.myProfile.user_id)
 
                             return (
@@ -278,13 +283,13 @@ export default function ChatConversationDetail({ conversationId, onBack }: ChatC
                                 handleSendMessage()
                             }
                         }}
-                        disabled={sendingMessage}
+                        disabled={sendingMessage || !isConnected}
                         className="rounded-full border-muted-foreground/20 focus-visible:ring-primary"
                     />
                     <Button
                         onClick={handleSendMessage}
                         size="icon"
-                        disabled={sendingMessage || !messageInput.trim()}
+                        disabled={sendingMessage || !messageInput.trim() || !isConnected}
                         className="rounded-full h-10 w-10 shrink-0 shadow-sm"
                     >
                         {sendingMessage ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}

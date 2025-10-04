@@ -7,6 +7,7 @@ import { projectStageConfig, projectStatusConfig } from "@/lib/utils"
 import { useCurrentUser } from "@/stores/current-user"
 import { useMutation } from "@apollo/client/react"
 import { Building2, MessageCircle } from "lucide-react"
+import { toast } from "sonner"
 
 interface ProjectHeaderProps {
     avatar_url: string | null;
@@ -32,6 +33,16 @@ export default function ProjectHeader({
 
     const [createConversation, { loading: creatingConversation }] = useMutation(CREATE_CONVERSATION, {
             refetchQueries: [{ query: GET_CONVERSATIONS }],
+            onCompleted: () => {
+                toast.success("Conversation créée !", {
+                    description: "Vous pouvez dès à présent discuter avec cette personne.",
+                });
+            },
+            onError: () => {
+                toast.error("Oups !", {
+                    description: "Une erreur s'est produite lors de la création de la conversation.",
+                });
+            }
         },
     )
 

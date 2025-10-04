@@ -1,4 +1,4 @@
-import MyProjectsForm from "@/components/application/my-projects/form/my-projects-form";
+import MyProjectsCreateForm from "@/components/application/my-projects/form/my-projects-create-form";
 import MyProjectsLayout from "@/components/application/my-projects/my-projects-layout";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
@@ -30,7 +30,7 @@ export default function MyProjectsPage() {
                         </BreadcrumbList>
                     </Breadcrumb>
                 </div>
-                <MyProjectsForm />
+                <MyProjectsCreateForm />
             </header>
             <div className="flex flex-1 flex-col p-4">
                 <MyProjectsLayout />

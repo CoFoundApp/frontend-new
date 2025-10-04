@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Lightbulb } from "lucide-react";
 import Link from "next/link";
-import MyProjectsForm from "./form/my-projects-form";
+import MyProjectsForm from "./form/my-projects-create-form";
 
 export default function MyProjectsListEmpty() {
     return (

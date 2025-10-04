@@ -1,7 +1,7 @@
 export default function MyProjectsComplete() {
     return (
         <div className="bg-muted p-4 rounded-md">
-            Presque terminé ! Il ne vous reste plus qu’à valider pour créer votre projet.
+            Presque terminé ! Il ne vous reste plus qu’à valider votre projet.
         </div>
     );
 }

@@ -82,7 +82,7 @@ export default function ProjectShowPositions({ projectId, ownerId, members }: Pr
                                     <CardDescription className="text-sm leading-relaxed">{position.description}</CardDescription>
                                 )}
                             </CardHeader>
-                            {!isOwner || !isMember && (
+                            {!isOwner && !isMember && (
                                 <CardFooter>
                                     <ProjectApplyDialog
                                         positionId={position.id}
