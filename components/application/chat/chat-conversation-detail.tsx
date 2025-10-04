@@ -3,17 +3,19 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useCurrentUser } from "@/stores/current-user"
-import { useQuery } from "@apollo/client/react"
+import { useMutation, useQuery } from "@apollo/client/react"
 import { formatDistanceToNow } from "date-fns"
 import { fr } from "date-fns/locale"
-import { Loader2, Send, MessageSquare, User, Wifi, WifiOff } from "lucide-react"
+import { Loader2, Send, MessageSquare, User } from "lucide-react"
 import { useState, useEffect, useRef } from "react"
 import { cn } from "@/lib/utils"
 import {
     GET_CONVERSATIONS,
     GET_MESSAGES,
+    SEND_MESSAGE,
     type GetConversationsResult,
     type GetMessagesResult,
+    type SendMessageResult,
 } from "@/graphql/conversations"
 import { useSocket } from "@/hooks/useSocket"
 import Link from "next/link"
@@ -51,7 +53,7 @@ export default function ChatConversationDetail({ conversationId, onBack }: ChatC
     const [sendingMessage, setSendingMessage] = useState(false)
     const messagesEndRef = useRef<HTMLDivElement>(null)
 
-    const { socket, isConnected, joinRoom, sendMessage } = useSocket({
+    const { socket, isConnected, joinRoom, sendMessage: sendSocketMessage } = useSocket({
         userId: user?.myProfile.user_id,
     });
 
@@ -69,19 +71,32 @@ export default function ChatConversationDetail({ conversationId, onBack }: ChatC
         errorPolicy: "all",
     })
 
+    const [sendMessage, { loading: sendingGraphQL }] = useMutation<SendMessageResult>(SEND_MESSAGE)
+
     useEffect(() => {
         if (socket && conversationId) {
             joinRoom(conversationId);
 
             const handleNewMessage = (message: SocketMessage) => {
-                console.log('📨 New message received via Socket.IO:', message);
+                if (message.from === user?.myProfile.user_id) {
+                    return;
+                }
                 
                 const formattedMessage = formatSocketMessageForDisplay(
                     message, 
                     `socket-${Date.now()}-${Math.random()}`
                 );
                 
-                setRealtimeMessages(prev => [...prev, formattedMessage]);
+                setRealtimeMessages(prev => {
+                    const exists = prev.some(msg => 
+                        msg.content === formattedMessage.content && 
+                        msg.sender_id === formattedMessage.sender_id &&
+                        Math.abs(new Date(msg.created_at).getTime() - new Date(formattedMessage.created_at).getTime()) < 1000
+                    );
+                    
+                    if (exists) return prev;
+                    return [...prev, formattedMessage];
+                });
             };
 
             socket.on('message:new', handleNewMessage);
@@ -94,7 +109,7 @@ export default function ChatConversationDetail({ conversationId, onBack }: ChatC
                 socket.off('room:joined');
             };
         }
-    }, [socket, conversationId, joinRoom]);
+    }, [socket, conversationId, joinRoom, user?.myProfile.user_id]);
 
     const allMessages = [
         ...(data?.messages.items || []),
@@ -104,6 +119,10 @@ export default function ChatConversationDetail({ conversationId, onBack }: ChatC
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
     }, [allMessages])
+
+    useEffect(() => {
+        setRealtimeMessages([]);
+    }, [conversationId]);
 
     if (!conversationId) {
         return (
@@ -126,12 +145,30 @@ export default function ChatConversationDetail({ conversationId, onBack }: ChatC
     const handleSendMessage = async () => {
         if (!messageInput.trim() || !conversationId) return
 
+        const messageContent = messageInput.trim();
         setSendingMessage(true)
+        
         try {
-            await sendMessage(conversationId, messageInput.trim());
+            await sendMessage({
+                variables: {
+                    content: messageContent,
+                    conversation_id: conversationId,
+                },
+            })
+
+            if (isConnected) {
+                try {
+                    await sendSocketMessage(conversationId, messageContent);
+                } catch (socketError) {
+                    console.warn("⚠️ Socket.IO broadcast failed:", socketError);
+                }
+            } else {
+                console.warn("⚠️ Socket.IO not connected, message saved but not broadcasted")
+            }
+
             setMessageInput("")
         } catch (error) {
-            console.error("Failed to send message via Socket.IO:", error)
+            console.error("❌ Failed to send message:", error)
         } finally {
             setSendingMessage(false)
         }
@@ -283,13 +320,13 @@ export default function ChatConversationDetail({ conversationId, onBack }: ChatC
                                 handleSendMessage()
                             }
                         }}
-                        disabled={sendingMessage || !isConnected}
+                        disabled={sendingMessage}
                         className="rounded-full border-muted-foreground/20 focus-visible:ring-primary"
                     />
                     <Button
                         onClick={handleSendMessage}
                         size="icon"
-                        disabled={sendingMessage || !messageInput.trim() || !isConnected}
+                        disabled={sendingMessage || !messageInput.trim()}
                         className="rounded-full h-10 w-10 shrink-0 shadow-sm"
                     >
                         {sendingMessage ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
