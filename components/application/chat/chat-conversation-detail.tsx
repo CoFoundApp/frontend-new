@@ -77,11 +77,7 @@ export default function ChatConversationDetail({ conversationId, onBack }: ChatC
         if (socket && conversationId) {
             joinRoom(conversationId);
 
-            const handleNewMessage = (message: SocketMessage) => {
-                if (message.from === user?.myProfile.user_id) {
-                    return;
-                }
-                
+            const handleNewMessage = (message: SocketMessage) => {                
                 const formattedMessage = formatSocketMessageForDisplay(
                     message, 
                     `socket-${Date.now()}-${Math.random()}`
