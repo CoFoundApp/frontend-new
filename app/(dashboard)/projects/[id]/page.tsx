@@ -22,7 +22,7 @@ export default async function ProjectShowPage({ params }: { params: Promise<{ id
                     <Breadcrumb>
                         <BreadcrumbList>
                             <BreadcrumbItem className="hidden md:block">
-                                <BreadcrumbLink href="/">Général</BreadcrumbLink>
+                                <BreadcrumbLink href="/discover">Général</BreadcrumbLink>
                             </BreadcrumbItem>
                             <BreadcrumbSeparator className="hidden md:block" />
                             <BreadcrumbItem className="hidden md:block">

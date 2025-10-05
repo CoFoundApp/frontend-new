@@ -4,12 +4,6 @@ export function getMenuItems(pathname: string) {
     return {
         general: [
             {
-                href: "/",
-                label: "Tableau de bord",
-                icon: LayoutGrid,
-                isActive: pathname === "/",
-            },
-            {
                 href: "/discover",
                 label: "Découvrir",
                 icon: Search,

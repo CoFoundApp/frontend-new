@@ -94,7 +94,7 @@ export default function IntroductionForm() {
                     toast.success("Profil créé !", {
                         description: "Vous avez créé votre profil avec succès.",
                     });
-                    router.push("/");
+                    router.push("/discover");
                 })
                 .catch((err: Error) => {
                     console.log(err)

@@ -40,7 +40,7 @@ export default function LoginForm() {
                 toast.success("Connexion réussie !", {
                     description: "Vous vous êtes connecté avec succès.",
                 });
-                router.push("/");
+                router.push("/discover");
             })
             .catch((err: Error) => {
                 toast.error("Oups !", {

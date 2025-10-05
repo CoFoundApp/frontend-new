@@ -13,7 +13,7 @@ export default function NotFound() {
                         Désolé, la page que vous cherchez n'existe pas ou a été déplacée.
                     </p>
                     <Button variant="secondary" className="mt-10 cursor-pointer" asChild>
-                        <Link href="/">
+                        <Link href="/discover">
                             Retourner à l'accueil
                         </Link>
                     </Button>

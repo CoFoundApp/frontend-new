@@ -12,7 +12,7 @@ export async function middleware(request: NextRequest) {
     const hasTokens = !!(accessToken || refreshToken)
 
     if (isPublicPath && hasTokens) {
-        return NextResponse.redirect(new URL("/", request.url))
+        return NextResponse.redirect(new URL("/discover", request.url))
     }
 
     if (isPublicPath) {
@@ -53,7 +53,7 @@ async function refreshTokens(request: NextRequest): Promise<boolean> {
             method: "POST",
             headers: { 
                 'Content-Type': 'application/json',
-                'Cookie': `refresh_token=${refreshToken?.value}` // ⚠️ Passer le cookie
+                'Cookie': `refresh_token=${refreshToken?.value}`
             },
             body: JSON.stringify({
                 query: `mutation { refresh { accessToken refreshToken } }`
@@ -86,7 +86,7 @@ async function checkUserProfile(request: NextRequest) {
         const displayName = result.data?.myProfile?.display_name?.trim() ?? ""
 
         if (pathname === "/introduction" && displayName) {
-            return NextResponse.redirect(new URL("/", request.url))
+            return NextResponse.redirect(new URL("/discover", request.url))
         }
         
         if (pathname !== "/introduction" && !displayName) {
