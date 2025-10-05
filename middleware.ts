@@ -108,7 +108,6 @@ export async function middleware(request: NextRequest) {
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
-                    'Cookie': request.headers.get('Cookie') || '',
                 },
                 body: JSON.stringify({
                     query: `
@@ -204,7 +203,6 @@ async function attemptTokenRefresh(request: NextRequest): Promise<boolean> {
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
-                'Cookie': request.headers.get('Cookie') || '',
             },
             body: JSON.stringify({
                 query: `
@@ -249,7 +247,6 @@ async function checkUserProfileAndRedirect(request: NextRequest) {
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
-                'Cookie': request.headers.get('Cookie') || '',
             },
             body: JSON.stringify({
                 query: `
