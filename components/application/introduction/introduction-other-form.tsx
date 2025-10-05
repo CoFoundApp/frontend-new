@@ -25,7 +25,7 @@ export default function IntroductionOtherForm() {
                                     const valid = (sel ?? []).filter((v): v is z.infer<typeof LanguageCode> =>
                                         LanguageCode.options.includes(v as any)
                                     );
-                                    field.onChange(valid);
+                                    field.onChange(valid.length > 0 ? valid : []);
                                 }}
                                 placeholder="Sélectionnez vos langues..."
                                 className="w-full"

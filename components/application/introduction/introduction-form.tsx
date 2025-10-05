@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
-import { IntroductionGeneralSchema, IntroductionOtherSchema, IntroductionProSchema } from "@/schemas/introduction";
+import { IntroductionExperienceSchema, IntroductionGeneralSchema, IntroductionOtherSchema, IntroductionProSchema } from "@/schemas/introduction";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { defineStepper } from "@stepperize/react";
 import { useForm } from "react-hook-form";
@@ -18,10 +18,12 @@ import { UPDATE_MY_PROFILE } from "@/graphql/profile";
 import { sideCannons } from "@/lib/utils";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import IntroductionExperienceForm from "./introduction-experience-form";
 
 const { useStepper, steps, utils } = defineStepper(
     { id: "general", label: "Général", schema: IntroductionGeneralSchema },
     { id: "pro", label: "Détails professionnels", schema: IntroductionProSchema },
+    { id: "experience", label: "Parcours", schema: IntroductionExperienceSchema },
     { id: "other", label: "Autre", schema: IntroductionOtherSchema },
     { id: "complete", label: "Fin", schema: z.object({}) },
 );
@@ -41,16 +43,35 @@ export default function IntroductionForm() {
             tags: [],
             skills: [],
             interests: [],
+            educations: [],
+            work_experiences: [],
         }
     });
 
     const onSubmit = (values: z.infer<typeof stepper.current.schema>) => {
         if (stepper.isLast) {
+            const formData = form.getValues()
+
+            const cleanedEducations = formData.educations?.map((edu) => ({
+                ...edu,
+                end_date: edu.is_current || !edu.end_date ? null : edu.end_date,
+                grade: edu.grade || null,
+                description: edu.description || null,
+            }))
+
+            const cleanedWorkExperiences = formData.work_experiences?.map((work) => ({
+                ...work,
+                end_date: work.is_current || !work.end_date ? null : work.end_date,
+                description: work.description || null,
+            }))
+
             updateMyProfile({
                 variables: {
                     input: {
-                        ...form.getValues(),
-                        ...values
+                        ...formData,
+                        ...values,
+                        educations: cleanedEducations,
+                        work_experiences: cleanedWorkExperiences,
                     }
                 }
             })
@@ -94,6 +115,7 @@ export default function IntroductionForm() {
                             {stepper.switch({
                                 general: () => <IntroductionGeneralForm />,
                                 pro: () => <IntroductionProForm />,
+                                experience: () => <IntroductionExperienceForm />,
                                 other: () => <IntroductionOtherForm />,
                                 complete: () => <IntroductionComplete />
                             })}

@@ -1,3 +1,4 @@
+import MyProfileEditForm from "@/components/application/my-profile/my-profile-edit-form";
 import MyProfileLayout from "@/components/application/my-profile/my-profile-layout";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
@@ -6,7 +7,7 @@ import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 export default function MyProfilePage() {
     return (
         <SidebarInset>
-            <header className="flex h-16 shrink-0 items-center justify-between gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+            <header className="flex h-16 px-4 shrink-0 items-center justify-between gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
                 <div className="flex items-center gap-2 px-4">
                     <SidebarTrigger className="ml-1" />
                     <Separator
@@ -29,6 +30,7 @@ export default function MyProfilePage() {
                         </BreadcrumbList>
                     </Breadcrumb>
                 </div>
+                <MyProfileEditForm />
             </header>
             <div className="flex flex-1 flex-col p-4">
                 <MyProfileLayout />
