@@ -67,9 +67,7 @@ async function refreshTokens(request: NextRequest): Promise<boolean> {
 }
 
 async function checkUserProfile(request: NextRequest) {
-    if (request.nextUrl.pathname === "/introduction") {
-        return NextResponse.next()
-    }
+    const pathname = request.nextUrl.pathname
 
     try {
         const accessToken = request.cookies.get("access_token")
@@ -87,7 +85,11 @@ async function checkUserProfile(request: NextRequest) {
         const result = await response.json()
         const displayName = result.data?.myProfile?.display_name?.trim() ?? ""
 
-        if (!displayName) {
+        if (pathname === "/introduction" && displayName) {
+            return NextResponse.redirect(new URL("/", request.url))
+        }
+        
+        if (pathname !== "/introduction" && !displayName) {
             return NextResponse.redirect(new URL("/introduction", request.url))
         }
     } catch (error) {
@@ -96,6 +98,7 @@ async function checkUserProfile(request: NextRequest) {
 
     return NextResponse.next()
 }
+
 
 export const config = {
     matcher: ['/((?!api|_next/static|_next/image|favicon.ico|robots.txt|.*\\..*).*)',]
