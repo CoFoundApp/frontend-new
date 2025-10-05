@@ -10,11 +10,6 @@ export async function middleware(request: NextRequest) {
         pathname.startsWith(path)
     )
 
-    if (isPublicPath) {
-        console.log("✅ [MIDDLEWARE] Public path, skipping auth checks")
-        return NextResponse.next()
-    }
-
     const accessToken = request.cookies.get("access_token")
     const refreshToken = request.cookies.get("refresh_token")
     
@@ -23,6 +18,29 @@ export async function middleware(request: NextRequest) {
         hasRefreshToken: !!refreshToken
     })
 
+    // NOUVELLE LOGIQUE: Si utilisateur connecté essaie d'accéder aux routes publiques
+    if (isPublicPath && (accessToken || refreshToken)) {
+        console.log("🔄 [MIDDLEWARE] Authenticated user trying to access public route, checking tokens...")
+        
+        // Vérifier si les tokens sont valides
+        const hasValidTokens = await checkTokenValidity(accessToken, refreshToken, request)
+        
+        if (hasValidTokens) {
+            console.log("🔄 [MIDDLEWARE] Valid tokens found, redirecting to dashboard")
+            return NextResponse.redirect(new URL("/", request.url)) // ou "/dashboard"
+        } else {
+            console.log("✅ [MIDDLEWARE] Invalid tokens, allowing access to public path")
+            return NextResponse.next()
+        }
+    }
+
+    // Routes publiques pour utilisateurs non connectés
+    if (isPublicPath) {
+        console.log("✅ [MIDDLEWARE] Public path for unauthenticated user, allowing access")
+        return NextResponse.next()
+    }
+
+    // Le reste de votre logique existante pour les routes protégées
     if (!accessToken && !refreshToken) {
         console.log("❌ [MIDDLEWARE] No tokens found, redirecting to login")
         return NextResponse.redirect(new URL("/login", request.url))
@@ -124,6 +142,95 @@ export async function middleware(request: NextRequest) {
 
     console.log("👤 [MIDDLEWARE] Checking user profile...")
     return await checkUserProfileAndRedirect(request)
+}
+
+// Nouvelle fonction pour vérifier la validité des tokens
+async function checkTokenValidity(
+    accessToken: any,
+    refreshToken: any,
+    request: NextRequest
+): Promise<boolean> {
+    // Si pas de tokens, considérer comme invalide
+    if (!refreshToken) {
+        return false
+    }
+
+    try {
+        // Vérifier le refresh token en premier
+        const refreshPayload = JSON.parse(atob(refreshToken.value.split('.')[1]))
+        const refreshTokenExp = refreshPayload.exp * 1000
+        const now = Date.now()
+
+        // Si refresh token expiré, tokens invalides
+        if (refreshTokenExp <= now) {
+            console.log("⚠️ [TOKEN_CHECK] Refresh token expired")
+            return false
+        }
+
+        // Si pas d'access token, essayer de le refresh
+        if (!accessToken) {
+            console.log("⚠️ [TOKEN_CHECK] No access token, trying to refresh")
+            return await attemptTokenRefresh(request)
+        }
+
+        // Vérifier l'access token
+        try {
+            const accessPayload = JSON.parse(atob(accessToken.value.split('.')[1]))
+            const accessTokenExp = accessPayload.exp * 1000
+            
+            // Si access token valide, tokens valides
+            if (accessTokenExp > now) {
+                console.log("✅ [TOKEN_CHECK] Access token valid")
+                return true
+            } else {
+                console.log("⚠️ [TOKEN_CHECK] Access token expired, trying to refresh")
+                return await attemptTokenRefresh(request)
+            }
+        } catch (error) {
+            console.log("⚠️ [TOKEN_CHECK] Cannot decode access token, trying to refresh")
+            return await attemptTokenRefresh(request)
+        }
+    } catch (error) {
+        console.log("❌ [TOKEN_CHECK] Error checking tokens:", error)
+        return false
+    }
+}
+
+// Fonction pour essayer de refresh les tokens
+async function attemptTokenRefresh(request: NextRequest): Promise<boolean> {
+    try {
+        const refreshResponse = await fetch(process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT!, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Cookie': request.headers.get('Cookie') || '',
+            },
+            body: JSON.stringify({
+                query: `
+                    mutation Refresh {
+                        refresh {
+                            accessToken
+                            refreshToken
+                        }
+                    }
+                `,
+            }),
+        })
+
+        const refreshResult = await refreshResponse.json()
+        
+        if (refreshResult.errors) {
+            console.log("❌ [TOKEN_REFRESH] Refresh failed:", refreshResult.errors)
+            return false
+        }
+        
+        console.log("✅ [TOKEN_REFRESH] Refresh successful")
+        return true
+    } catch (error) {
+        console.log("❌ [TOKEN_REFRESH] Refresh error:", error)
+        return false
+    }
 }
 
 async function checkUserProfileAndRedirect(request: NextRequest) {
