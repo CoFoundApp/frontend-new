@@ -44,8 +44,6 @@ export default function MyProfileEditForm() {
         fetchPolicy: "network-only",
     });
 
-    console.log(data?.myProfile)
-
     const [updateMyProfile, { loading }] = useMutation(UPDATE_MY_PROFILE, {
         refetchQueries: [GET_MY_PROFILE]
     });
@@ -94,7 +92,21 @@ export default function MyProfileEditForm() {
 
     const onSubmit = (values: z.infer<typeof stepper.current.schema>) => {
         if (stepper.isLast) {
-            const formData = form.getValues()
+            const formData = form.getValues() as {
+                display_name: string;
+                visibility: string;
+                availability_hours?: number;
+                bio?: string;
+                educations?: any[];
+                headline?: string;
+                interests?: string[];
+                languages?: string[];
+                location?: string;
+                looking_for?: string;
+                skills?: string[];
+                tags?: string[];
+                work_experiences?: any[];
+            }
 
             const removeTypename = (obj: any): any => {
                 if (obj === null || obj === undefined) return obj;
