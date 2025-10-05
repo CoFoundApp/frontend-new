@@ -11,35 +11,29 @@ export async function middleware(request: NextRequest) {
     const isPublicPath = PUBLIC_PATHS.some(path => pathname.startsWith(path))
     const hasTokens = !!(accessToken || refreshToken)
 
-    // Rediriger utilisateurs authentifiés des pages publiques
     if (isPublicPath && hasTokens) {
         return NextResponse.redirect(new URL("/", request.url))
     }
 
-    // Autoriser accès aux pages publiques
     if (isPublicPath) {
         return NextResponse.next()
     }
 
-    // Vérifier présence des tokens pour routes protégées
     if (!refreshToken) {
         return NextResponse.redirect(new URL("/login", request.url))
     }
 
-    // Vérifier expiration du refresh token
     if (!isTokenValid(refreshToken.value)) {
         return NextResponse.redirect(new URL("/login", request.url))
     }
 
-    // Vérifier si access token nécessite refresh
     if (!accessToken || !isTokenValid(accessToken.value, 5 * 60)) {
-        const refreshed = await refreshTokens()
+        const refreshed = await refreshTokens(request)
         if (!refreshed) {
             return NextResponse.redirect(new URL("/login", request.url))
         }
     }
 
-    // Vérifier profil utilisateur
     return checkUserProfile(request)
 }
 
@@ -52,11 +46,15 @@ function isTokenValid(token: string, bufferSeconds: number = 0): boolean {
     }
 }
 
-async function refreshTokens(): Promise<boolean> {
+async function refreshTokens(request: NextRequest): Promise<boolean> {
     try {
+        const refreshToken = request.cookies.get("refresh_token")
         const response = await fetch(process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT!, {
             method: "POST",
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'Cookie': `refresh_token=${refreshToken?.value}` // ⚠️ Passer le cookie
+            },
             body: JSON.stringify({
                 query: `mutation { refresh { accessToken refreshToken } }`
             })
@@ -74,9 +72,13 @@ async function checkUserProfile(request: NextRequest) {
     }
 
     try {
+        const accessToken = request.cookies.get("access_token")
         const response = await fetch(process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT!, {
             method: "POST",
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'Cookie': `access_token=${accessToken?.value}`
+            },
             body: JSON.stringify({
                 query: `query { myProfile { display_name } }`
             })
