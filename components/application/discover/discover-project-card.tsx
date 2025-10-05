@@ -35,7 +35,7 @@ export default function DiscoverProjectCard({ project, score, reasons }: Discove
 
     return (
         <Card 
-            className="h-full flex flex-col"
+            className="flex flex-col"
             onClick={() => router.push(`projects/${project.id}`)}
         >
             <CardHeader className="flex items-center justify-between gap-4">
@@ -50,7 +50,7 @@ export default function DiscoverProjectCard({ project, score, reasons }: Discove
 
             <CardContent className="space-y-6 flex-1 flex flex-col">
                 {project.summary && (
-                    <p className="text-sm text-muted-foreground leading-relaxed text-pretty line-clamp-3">{project.summary}</p>
+                    <p className="text-sm text-muted-foreground leading-relaxed text-pretty line-clamp-2 min-h-[2.5rem]">{project.summary}</p>
                 )}
 
                 <div className="flex items-center gap-2 flex-wrap">
