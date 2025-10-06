@@ -3,6 +3,7 @@ import { Inter as FontSans } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import Providers from "@/providers/providers";
+import VersionChecker from "@/components/version-checker";
 
 const fontSans = FontSans({
     subsets: ["latin"],
@@ -28,6 +29,7 @@ export default function RootLayout({
                 )}
             >
                 <Providers>
+                    <VersionChecker />
                     {children}
                 </Providers>
             </body>
