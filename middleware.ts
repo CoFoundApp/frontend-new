@@ -2,9 +2,50 @@ import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 
 const PUBLIC_PATHS = ["/login", "/register", "/forgot-password"]
+const APP_VERSION = process.env.NEXT_PUBLIC_APP_VERSION || '1.0.0'
 
 export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl
+
+    const storedVersion = request.cookies.get("app_version")
+    
+    if (storedVersion && storedVersion.value !== APP_VERSION) {
+        const response = NextResponse.redirect(new URL("/login", request.url))
+        
+        response.cookies.set({
+            name: "access_token",
+            value: "",
+            expires: new Date(0),
+            path: "/",
+        })
+        
+        response.cookies.set({
+            name: "refresh_token",
+            value: "",
+            expires: new Date(0),
+            path: "/",
+        })
+        
+        response.cookies.set({
+            name: "app_version",
+            value: APP_VERSION,
+            path: "/",
+            maxAge: 60 * 60 * 24 * 365,
+        })
+        
+        return response
+    }
+    
+    if (!storedVersion) {
+        const response = NextResponse.next()
+        response.cookies.set({
+            name: "app_version",
+            value: APP_VERSION,
+            path: "/",
+            maxAge: 60 * 60 * 24 * 365,
+        })
+    }
+
     const accessToken = request.cookies.get("access_token")
     const refreshToken = request.cookies.get("refresh_token")
     
