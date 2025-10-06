@@ -11,6 +11,12 @@ export async function middleware(request: NextRequest) {
     
     console.log("📍 PATH CHECK:", { pathname, isPublicPath })
 
+    console.log("🍪 ALL COOKIES:")
+    const allCookies = request.cookies.getAll()
+    allCookies.forEach(cookie => {
+        console.log(`  - ${cookie.name}: ${cookie.value.substring(0, 30)}...`)
+    })
+
     if (isPublicPath) {
         const accessToken = request.cookies.get("access_token")
         console.log("🍪 PUBLIC PATH - Access token:", accessToken ? "EXISTS" : "MISSING")
@@ -42,14 +48,20 @@ async function callWhoami(request: NextRequest) {
     console.log("🔍 CALLING WHOAMI...")
     
     try {
-        const cookieHeader = request.headers.get('cookie') || ''
-        console.log("🍪 COOKIES HEADER:", cookieHeader.substring(0, 100) + "...")
+        // Construire manuellement les cookies pour être sûr
+        const cookies = request.cookies.getAll()
+        const cookieString = cookies.map(cookie => `${cookie.name}=${cookie.value}`).join('; ')
+        
+        console.log("🍪 CONSTRUCTED COOKIE STRING:", cookieString.substring(0, 200) + "...")
+        console.log("🍪 SPECIFIC TOKENS:")
+        console.log("  - access_token:", request.cookies.get("access_token")?.value?.substring(0, 30) || "MISSING")
+        console.log("  - refresh_token:", request.cookies.get("refresh_token")?.value?.substring(0, 30) || "MISSING")
         
         const response = await fetch(process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT!, {
             method: "POST",
             headers: { 
                 'Content-Type': 'application/json',
-                'Cookie': cookieHeader
+                'Cookie': cookieString // Utiliser la string construite manuellement
             },
             body: JSON.stringify({
                 query: `query { whoami }`
@@ -83,14 +95,16 @@ async function checkUserProfile(request: NextRequest) {
     console.log("👤 CHECKING USER PROFILE FOR PATH:", pathname)
 
     try {
-        const cookieHeader = request.headers.get('cookie') || ''
-        console.log("🍪 PROFILE CHECK - Using cookies:", cookieHeader.substring(0, 100) + "...")
+        const cookies = request.cookies.getAll()
+        const cookieString = cookies.map(cookie => `${cookie.name}=${cookie.value}`).join('; ')
+        
+        console.log("🍪 PROFILE CHECK - Using cookies:", cookieString.substring(0, 100) + "...")
         
         const response = await fetch(process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT!, {
             method: "POST",
             headers: { 
                 'Content-Type': 'application/json',
-                'Cookie': cookieHeader
+                'Cookie': cookieString
             },
             body: JSON.stringify({
                 query: `query { myProfile { display_name } }`
