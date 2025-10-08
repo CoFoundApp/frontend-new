@@ -28,7 +28,7 @@ export default function MyProjectsShowHeader({
             <CardContent className="p-6">
                 <div className="flex flex-col items-center text-center space-y-4 mb-6">
                     <Avatar className="size-20 ring-2 ring-border">
-                        <AvatarImage src={avatar_url ?? ""} alt={title} />
+                        <AvatarImage src={`${process.env.NEXT_PUBLIC_API_URL}${avatar_url}`} alt={title} />
                         <AvatarFallback className="bg-primary text-primary-foreground text-xl font-bold">
                             {title.charAt(0).toUpperCase()}
                         </AvatarFallback>
